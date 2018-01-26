@@ -1,1 +1,6 @@
+# Maven build directory
 /target
+
+# IntelliJ files
+/.idea
+jw4a.iml
