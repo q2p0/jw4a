@@ -1,4 +1,4 @@
-x<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
@@ -9,12 +9,27 @@ x<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org
   <name>jw4a</name>
   <url>http://maven.apache.org</url>
 
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- TODO: Maybe needed on future
+            <antlr4.visitor>true</antlr4.visitor>
+            <antlr4.listener>true</antlr4.listener>
+        -->
+    </properties>
+
   <dependencies>
 
     <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
         <version>4.7.1</version>
+    </dependency>
+
+    <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
+    <dependency>
+        <groupId>commons-cli</groupId>
+        <artifactId>commons-cli</artifactId>
+        <version>1.4</version>
     </dependency>
 
     <!-- TODO: Add unitary test to project
@@ -25,14 +40,6 @@ x<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org
 	      <scope>test</scope>
 	    </dependency>
     -->
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    	<!-- TODO: Maybe needed on future
-	        <antlr4.visitor>true</antlr4.visitor>
-	        <antlr4.listener>true</antlr4.listener>
-		-->
-    </properties>
 
   </dependencies>
 
