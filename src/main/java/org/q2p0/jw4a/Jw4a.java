@@ -17,4 +17,12 @@ public class Jw4a {
 		System.out.println("Hello Java Wrappers for Android.");
     }
 
+    /**
+     * Get the name of the compiled jar file.
+     */
+    static String getProgName() {
+        return new java.io.File(Jw4a.class.getProtectionDomain()
+                .getCodeSource().getLocation().getPath()).getName();
+    }
+
 }
