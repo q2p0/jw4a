@@ -4,6 +4,7 @@
 # IntelliJ files
 /.idea
 jw4a.iml
+/gen
 
 # Local files for development purpouses 
 /run.sh
