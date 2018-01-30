@@ -7,10 +7,26 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Parse the arguments from the command line
- */
-public class CLParameters {
+// COMMAND LINE ARGUMENTS PARSER
+// Responsibilities:
+// - Define the available arguments & default values.
+// - Parse and store the arguments values.
+// - Check the correction of the arguments and show an error in case of failure.
+
+public class CLParameters { //TODO: Rename to CLArgumentsParser
+
+    // SINGLETON & CTOR
+
+    private static CLParameters instance;
+    private CLParameters() { super(); }
+    static CLParameters GetInstance() {
+        if(instance==null)
+            instance = new CLParameters();
+        return instance;
+    }
+
+    // PARAMETERS
+    //TODO: Add custom user java classes path parameters
 
     private static final String DEFINITION_FILE_KEY = "df";
     private static final String DEFINITION_FILE_DEFAULT = "Jw4aLists.txt";
@@ -22,8 +38,7 @@ public class CLParameters {
     private static final String API_LEVEL_KEY = "al";
     int minApi, maxApi;
 
-    //TODO: Add custom user java classes path parameters
-
+    // Command line args parse method
     void parseArgs(String[] args ) {
 
         Option android_home_option = Option.builder(ANDROID_HOME_KEY).longOpt("android-home")
@@ -39,7 +54,7 @@ public class CLParameters {
         Option api_level = Option.builder(API_LEVEL_KEY).longOpt("api-levels")
                 .desc("Range of API levels that will be used to build the JNI Java Helpers. Can be a concrete API "
                 +"'-"+API_LEVEL_KEY+" 21' or a range '-"+API_LEVEL_KEY+" 21-26'.")
-                .hasArg().required(false).build();
+                .hasArg().required(true).build(); //TODO: Make it not required when user can search definition only for his custom classes
 
         Options options = new Options()
                 .addOption( android_home_option )
@@ -53,7 +68,7 @@ public class CLParameters {
         } catch (Exception e) {
             System.err.println("ERROR: Incorrect usage");
             new HelpFormatter().printHelp( Jw4a.getProgName() + " [Options]", options );
-            System.exit(-1);
+            System.exit(ExitErrorCodes.APACHE_CLI );
         }
 
         // Definitions file
@@ -64,7 +79,7 @@ public class CLParameters {
         File f = new File(definitionFile);
         if(!f.exists() || f.isDirectory()) {
             System.err.println("ERROR: Definitions file don't exist or is a directory.");
-            System.exit(-2 );
+            System.exit(ExitErrorCodes.INCORRECT_JW4ALISTS );
         }
 
         // ANDROID_HOME & API_LEVEL
@@ -85,10 +100,12 @@ public class CLParameters {
                 if( androidHome == null ) {
                     System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified" +
                                        "or ANDROID_HOME environment variable not defined.");
-                    System.exit(-3);
+                    System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
                 }
             }
-            //TODO: Check android home is a directory
+            if( androidHome.charAt( androidHome.length() - 1 ) == '/' ) //TODO: Compile and check on WINDOWS SO
+                androidHome = androidHome.substring( 0, androidHome.length() - 2 );
+            //TODO: Check that exist & is an directory
 
             Pattern p = Pattern.compile("(\\d+)(-\\d+)?");
             Matcher m = p.matcher(apiLevel);
@@ -102,18 +119,22 @@ public class CLParameters {
                     if (maxApiStr != null) {
                         maxApiStr = maxApiStr.substring(1);
                         maxApi = Integer.parseInt(maxApiStr);
-                    }
+                    } else
+                        maxApi = minApi;
                 } catch (java.lang.NumberFormatException e) {
                     System.err.println("ERROR: Incorrect API levels");
                     e.printStackTrace();
-                    System.exit(-5);
+                    System.exit(ExitErrorCodes.APILEVELS_PARSEINT);
                 }
 
-                //TODO: Check that the SDK has the needed android jars
+                if( maxApi < minApi && maxApi != 0 ) {
+                    System.err.println("ERROR: Incorrect API levels. Correct range is 'a-b' where a<b");
+                    System.exit(ExitErrorCodes.APILEVELS_INVERTED_RANGE);
+                }
 
             } else {
                 System.err.println("ERROR: Api levels must be a concrete value '21' or a range '21-26'");
-                System.exit(-4);
+                System.exit(ExitErrorCodes.APILEVELS_REGEX_FAIL);
             }
         }
     }
