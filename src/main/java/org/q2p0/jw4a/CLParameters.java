@@ -98,7 +98,7 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
                         break;
                     }
                 if( androidHome == null ) {
-                    System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified" +
+                    System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified " +
                                        "or ANDROID_HOME environment variable not defined.");
                     System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
                 }
