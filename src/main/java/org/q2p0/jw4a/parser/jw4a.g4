@@ -77,3 +77,5 @@ PARENTHESIS_CLOSE: ')';
 ID: [a-zA-Z_][a-zA-Z0-9_]*;
 WS: [ \t\n\r]+ -> skip;
 
+COMMENT : '/*' .*? '*/' -> skip;
+LINE_COMMENT : '//' ~[\r\n]* -> skip;
