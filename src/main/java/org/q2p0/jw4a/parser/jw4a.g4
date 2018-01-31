@@ -9,6 +9,7 @@ grammar jw4a; //TODO: Change grammar to Jw4a
     import org.q2p0.jw4a.CLParameters;
 
     import org.q2p0.jw4a.abstractDesc.*;
+    import org.q2p0.jw4a.abstractDesc.nodes.*;
     import org.q2p0.jw4a.abstractDesc.nodes.parameter.*;
     import org.q2p0.jw4a.abstractDesc.JObjectsTree.*;
 
@@ -53,12 +54,14 @@ parameter returns [AbstractParameterDesc param]: //
     |
         PRIMITIVE_TYPE
         {
-
+            PrimitiveTypeDesc primitiveType = PrimitiveTypeDesc.parse( $PRIMITIVE_TYPE.text );
+            PrimitiveParameterDesc typeparam = new PrimitiveParameterDesc();
+            $param = typeparam;
         }
     )
     ID
     {
-        //$param.id = $ID.text;
+        $param.id = $ID.text;
     }
 ;
 
