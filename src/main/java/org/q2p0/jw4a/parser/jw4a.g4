@@ -11,6 +11,7 @@ grammar jw4a; //TODO: Change grammar to Jw4a
     import org.q2p0.jw4a.abstractDesc.*;
     import org.q2p0.jw4a.abstractDesc.nodes.*;
     import org.q2p0.jw4a.abstractDesc.nodes.parameter.*;
+    import org.q2p0.jw4a.abstractDesc.nodes.methodReturn.*;
     import org.q2p0.jw4a.abstractDesc.JObjectsTree.*;
 
     import java.lang.StringBuilder;
@@ -20,7 +21,6 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
     ReflectionManager reflection = ReflectionManager.GetInstance();
     WrappersDesc wrappersDescription = new WrappersDesc();
-
 
 }
 
@@ -33,20 +33,63 @@ package_description: dotted_string BRACKET_OPEN class_description* BRACKET_CLOSE
 
 class_description: ID BRACKET_OPEN method* BRACKET_CLOSE;
 
-method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
+// method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
+method returns [MethodDesc value]:
+    {
+        AbstractMethodReturnDesc returnDesc = null;
+    }
+    (
+        dotted_string
+            {
+                ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
+                if( references != null ) {
+                    ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
+                    returnDesc = new ClassMethodReturnDesc( classNode );
+                } else {
+                    //TODO: An class parameter has not been found eanywhere, show the error.
+                }
+            }
+        |
+        PRIMITIVE_TYPE
+            {
+                returnDesc = new PrimitiveTypeMethodReturnDesc( PrimitiveTypeDesc.parse($PRIMITIVE_TYPE.text) );
+            }
+        |
+        VOID
+            {
+                returnDesc = new VoidMethodReturnDesc();
+            }
+    )
+    ID
+    {
+        String id = $ID.text;
+    }
+    PARENTHESIS_OPEN
+    {
+        ArrayList<AbstractParameterDesc> parameters = new ArrayList<AbstractParameterDesc>();
+    }
+    (
+        parameter
+        {
+            parameters.add( $parameter.value );
+        }
+    )*
+    PARENTHESIS_CLOSE
+    {
+        $value = new MethodDesc( returnDesc, id, parameters);
+    }
+    SEMICOLON
+;
 
-// parameter returns : ( dotted_string | PRIMITIVE_TYPE ) ID ;
-parameter returns [AbstractParameterDesc param]: //
+// parameter : ( dotted_string | PRIMITIVE_TYPE ) ID ;
+parameter returns [AbstractParameterDesc value]: //
     (
         dotted_string
         {
             ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
-
             if( references != null ) {
-              ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
-              ClassParameterDesc classparam = new ClassParameterDesc();
-              classparam.classNode = classNode;
-              $param = classparam;
+                ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
+                $value = new ClassParameterDesc( classNode );
             } else {
                 //TODO: An class parameter has not been found eanywhere, show the error.
             }
@@ -54,14 +97,12 @@ parameter returns [AbstractParameterDesc param]: //
     |
         PRIMITIVE_TYPE
         {
-            PrimitiveTypeDesc primitiveType = PrimitiveTypeDesc.parse( $PRIMITIVE_TYPE.text );
-            PrimitiveParameterDesc typeparam = new PrimitiveParameterDesc();
-            $param = typeparam;
+            $value = new PrimitiveParameterDesc( PrimitiveTypeDesc.parse($PRIMITIVE_TYPE.text) );
         }
     )
     ID
     {
-        $param.id = $ID.text;
+        $value.id = $ID.text;
     }
 ;
 

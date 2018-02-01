@@ -4,4 +4,8 @@ import org.q2p0.jw4a.abstractDesc.JObjectsTree.ClassNode;
 
 public class ClassParameterDesc extends AbstractParameterDesc {
     public ClassNode classNode;
+
+    public ClassParameterDesc(ClassNode classNode) {
+        this.classNode = classNode;
+    }
 }
