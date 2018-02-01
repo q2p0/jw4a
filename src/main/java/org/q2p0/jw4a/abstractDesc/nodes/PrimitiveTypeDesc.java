@@ -14,7 +14,7 @@ public enum PrimitiveTypeDesc {
    BOOLEAN  ("boolean");
 
    private final String type;
-   private PrimitiveTypeDesc(final String text) {
+   PrimitiveTypeDesc(final String text) {
       this.type = text;
    }
 

@@ -15,6 +15,7 @@ grammar jw4a; //TODO: Change grammar to Jw4a
     import org.q2p0.jw4a.abstractDesc.JObjectsTree.*;
 
     import java.lang.StringBuilder;
+
 }
 
 @parser::members{
@@ -25,13 +26,55 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 }
 
 wrappers returns [WrappersDesc desc]:
-    package_description+
-    { $desc = wrappersDescription; }
+    package_description*
+    {
+        $desc = wrappersDescription;
+    }
 ;
 
-package_description: dotted_string BRACKET_OPEN class_description* BRACKET_CLOSE;
+// package_description: dotted_string BRACKET_OPEN class_description* BRACKET_CLOSE;
+package_description:
+    dotted_string
+    BRACKET_OPEN
+    (
+        class_description[ $dotted_string.text ]
+    )*
+    BRACKET_CLOSE
+;
 
-class_description: ID BRACKET_OPEN method* BRACKET_CLOSE;
+// class_description: ID BRACKET_OPEN method* BRACKET_CLOSE;
+class_description [String _package] returns [ClassDesc cd]:
+    {
+        String classID = $ID.text;
+        ClassNode classNode = null;
+        ArrayList<MethodDesc> methods = new ArrayList<MethodDesc>();
+    }
+    ID
+    {
+        String fullClassPath = $_package + "." + $ID.text;
+        ArrayList<PairClassApi> references = reflection.existClass( fullClassPath );
+        if( references != null ) {
+            classNode = (ClassNode) wrappersDescription.packageThree.addNode( fullClassPath, references );
+        } else {
+            //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
+            //TODO: Rule must return null
+        }
+    }
+    BRACKET_OPEN
+    (
+        method
+        {
+            if( $method.value != null )
+                methods.add( $method.value );
+        }
+    )*
+    BRACKET_CLOSE
+    {
+        //TODO: if classNode is null
+        //TODO: if methods is empty
+        $cd = new ClassDesc( classID, classNode, methods );
+    }
+;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
 method returns [MethodDesc value]:
@@ -46,7 +89,8 @@ method returns [MethodDesc value]:
                     ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
                     returnDesc = new ClassMethodReturnDesc( classNode );
                 } else {
-                    //TODO: An class parameter has not been found eanywhere, show the error.
+                    //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
+                    //TODO: Rule must return null
                 }
             }
         |
@@ -76,6 +120,8 @@ method returns [MethodDesc value]:
     )*
     PARENTHESIS_CLOSE
     {
+        //TODO: If returnDesc != null
+        //TODO: parameters != null
         $value = new MethodDesc( returnDesc, id, parameters);
     }
     SEMICOLON
@@ -91,7 +137,8 @@ parameter returns [AbstractParameterDesc value]: //
                 ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
                 $value = new ClassParameterDesc( classNode );
             } else {
-                //TODO: An class parameter has not been found eanywhere, show the error.
+                //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
+                //TODO: Rule must return null
             }
         }
     |
