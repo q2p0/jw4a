@@ -2,10 +2,10 @@ package org.q2p0.jw4a.ast.nodes.methodReturn;
 
 import org.q2p0.jw4a.ast.nodes.AST_PrimitiveType;
 
-public class PrimitiveTypeMethodReturnDesc extends AbstractMethodReturnDesc{
+public class AST_PrimitiveTypeMethodReturn extends AST_AbstractMethodReturn {
     public AST_PrimitiveType primitiveType;
 
-    public PrimitiveTypeMethodReturnDesc(AST_PrimitiveType primitiveType) {
+    public AST_PrimitiveTypeMethodReturn(AST_PrimitiveType primitiveType) {
         this.primitiveType = primitiveType;
     }
 }

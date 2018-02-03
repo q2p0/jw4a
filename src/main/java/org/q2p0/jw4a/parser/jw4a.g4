@@ -86,7 +86,7 @@ class_description [String _package] returns [AST_Class cd]:
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
 method returns [AST_Method value]:
     {
-        AbstractMethodReturnDesc returnDesc = null;
+        AST_AbstractMethodReturn returnDesc = null;
     }
     (
         dotted_string
@@ -94,7 +94,7 @@ method returns [AST_Method value]:
                 ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
                 if( references != null ) {
                     ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text, references );
-                    returnDesc = new ClassMethodReturnDesc( classNode );
+                    returnDesc = new AST_ClassMethodReturn( classNode );
                 } else {
                     //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
                     //TODO: Rule must return null
@@ -103,12 +103,12 @@ method returns [AST_Method value]:
         |
         PRIMITIVE_TYPE
             {
-                returnDesc = new PrimitiveTypeMethodReturnDesc( AST_PrimitiveType.parse($PRIMITIVE_TYPE.text) );
+                returnDesc = new AST_PrimitiveTypeMethodReturn( AST_PrimitiveType.parse($PRIMITIVE_TYPE.text) );
             }
         |
         VOID
             {
-                returnDesc = new VoidMethodReturnDesc();
+                returnDesc = new AST_VoidMethodReturn();
             }
     )
     ID
@@ -117,7 +117,7 @@ method returns [AST_Method value]:
     }
     PARENTHESIS_OPEN
     {
-        ArrayList<AbstractParameterDesc> parameters = new ArrayList<AbstractParameterDesc>();
+        ArrayList<AST_AbstractParameter> parameters = new ArrayList<AST_AbstractParameter>();
     }
     (
         parameter
@@ -135,14 +135,14 @@ method returns [AST_Method value]:
 ;
 
 // parameter : ( dotted_string | PRIMITIVE_TYPE ) ID ;
-parameter returns [AbstractParameterDesc value]: //
+parameter returns [AST_AbstractParameter value]: //
     (
         dotted_string
         {
             ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
             if( references != null ) {
                 ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text, references );
-                $value = new ClassParameterDesc( classNode );
+                $value = new AST_ClassParameter( classNode );
             } else {
                 //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
                 //TODO: Rule must return null
@@ -151,7 +151,7 @@ parameter returns [AbstractParameterDesc value]: //
     |
         PRIMITIVE_TYPE
         {
-            $value = new PrimitiveParameterDesc( AST_PrimitiveType.parse($PRIMITIVE_TYPE.text) );
+            $value = new AST_PrimitiveParameter( AST_PrimitiveType.parse($PRIMITIVE_TYPE.text) );
         }
     )
     ID
