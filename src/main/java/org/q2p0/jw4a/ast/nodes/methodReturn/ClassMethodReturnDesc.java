@@ -1,6 +1,6 @@
-package org.q2p0.jw4a.abstractDesc.nodes.methodReturn;
+package org.q2p0.jw4a.ast.nodes.methodReturn;
 
-import org.q2p0.jw4a.abstractDesc.JObjectsTree.ClassNode;
+import org.q2p0.jw4a.ast.JObjectsTree.ClassNode;
 
 public class ClassMethodReturnDesc extends AbstractMethodReturnDesc{
     public ClassNode classNode;

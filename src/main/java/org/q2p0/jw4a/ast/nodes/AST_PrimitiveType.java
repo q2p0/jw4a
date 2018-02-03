@@ -1,9 +1,9 @@
-package org.q2p0.jw4a.abstractDesc.nodes;
+package org.q2p0.jw4a.ast.nodes;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum PrimitiveTypeDesc {
+public enum AST_PrimitiveType {
    BYTE     ("byte"),
    SHORT    ("short"),
    INT      ("int"),
@@ -14,7 +14,7 @@ public enum PrimitiveTypeDesc {
    BOOLEAN  ("boolean");
 
    private final String type;
-   PrimitiveTypeDesc(final String text) {
+   AST_PrimitiveType(final String text) {
       this.type = text;
    }
 
@@ -22,11 +22,11 @@ public enum PrimitiveTypeDesc {
       return type;
    }
 
-   private static final Map<String, PrimitiveTypeDesc> lookup = new HashMap<>();
+   private static final Map<String, AST_PrimitiveType> lookup = new HashMap<>();
    static {
-      for(PrimitiveTypeDesc p : PrimitiveTypeDesc.values()) lookup.put(p.type, p);
+      for(AST_PrimitiveType p : AST_PrimitiveType.values()) lookup.put(p.type, p);
    }
-   public static PrimitiveTypeDesc parse(String url) {
+   public static AST_PrimitiveType parse(String url) {
       return lookup.get(url);
    }
 }

@@ -1,4 +1,4 @@
-package org.q2p0.jw4a.abstractDesc.JObjectsTree;
+package org.q2p0.jw4a.ast.JObjectsTree;
 
 public class PairClassApi {
     public Class _class;

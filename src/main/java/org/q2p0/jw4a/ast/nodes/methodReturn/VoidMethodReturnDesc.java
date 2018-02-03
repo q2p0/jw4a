@@ -1,4 +1,4 @@
-package org.q2p0.jw4a.abstractDesc.nodes.methodReturn;
+package org.q2p0.jw4a.ast.nodes.methodReturn;
 
 public class VoidMethodReturnDesc extends AbstractMethodReturnDesc{
 }

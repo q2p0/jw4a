@@ -1,6 +1,6 @@
 package org.q2p0.jw4a;
 
-import org.q2p0.jw4a.abstractDesc.JObjectsTree.PairClassApi;
+import org.q2p0.jw4a.ast.JObjectsTree.PairClassApi;
 
 import java.io.File;
 import java.net.MalformedURLException;

@@ -8,11 +8,11 @@ grammar jw4a; //TODO: Change grammar to Jw4a
     import org.q2p0.jw4a.ReflectionManager;
     import org.q2p0.jw4a.CLParameters;
 
-    import org.q2p0.jw4a.abstractDesc.*;
-    import org.q2p0.jw4a.abstractDesc.nodes.*;
-    import org.q2p0.jw4a.abstractDesc.nodes.parameter.*;
-    import org.q2p0.jw4a.abstractDesc.nodes.methodReturn.*;
-    import org.q2p0.jw4a.abstractDesc.JObjectsTree.*;
+    import org.q2p0.jw4a.ast.*;
+    import org.q2p0.jw4a.ast.nodes.*;
+    import org.q2p0.jw4a.ast.nodes.parameter.*;
+    import org.q2p0.jw4a.ast.nodes.methodReturn.*;
+    import org.q2p0.jw4a.ast.JObjectsTree.*;
 
     import java.lang.StringBuilder;
 
@@ -21,14 +21,14 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 @parser::members{
 
     ReflectionManager reflection = ReflectionManager.GetInstance();
-    WrappersDesc wrappersDescription = new WrappersDesc();
+    Description description = new Description();
 
 }
 
-wrappers returns [WrappersDesc desc]:
+wrappers returns [Description desc]:
     package_description*
     {
-        $desc = wrappersDescription;
+        $desc = description;
     }
 ;
 
@@ -49,11 +49,11 @@ package_description:
 ;
 
 // class_description: CLASS ID BRACKET_OPEN method* BRACKET_CLOSE;
-class_description [String _package] returns [ClassDesc cd]:
+class_description [String _package] returns [AST_Class cd]:
     CLASS
     {
         ClassNode classNode = null;
-        ArrayList<MethodDesc> methods = new ArrayList<MethodDesc>();
+        ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
     ID
     {
@@ -61,7 +61,7 @@ class_description [String _package] returns [ClassDesc cd]:
         String fullClassPath = $_package + "." + $ID.text;
         ArrayList<PairClassApi> references = reflection.existClass( fullClassPath );
         if( references != null ) {
-            classNode = (ClassNode) wrappersDescription.packageTree.addNode( fullClassPath, references );
+            classNode = (ClassNode) description.packageTree.addNode( fullClassPath, references );
         } else {
             //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
             //TODO: Rule must return null
@@ -79,12 +79,12 @@ class_description [String _package] returns [ClassDesc cd]:
     {
         //TODO: if classNode is null
         //TODO: if methods is empty
-        $cd = new ClassDesc( classID, classNode, methods );
+        $cd = new AST_Class( classID, classNode, methods );
     }
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
-method returns [MethodDesc value]:
+method returns [AST_Method value]:
     {
         AbstractMethodReturnDesc returnDesc = null;
     }
@@ -93,7 +93,7 @@ method returns [MethodDesc value]:
             {
                 ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
                 if( references != null ) {
-                    ClassNode classNode = (ClassNode) wrappersDescription.packageTree.addNode( $dotted_string.text, references );
+                    ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text, references );
                     returnDesc = new ClassMethodReturnDesc( classNode );
                 } else {
                     //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
@@ -103,7 +103,7 @@ method returns [MethodDesc value]:
         |
         PRIMITIVE_TYPE
             {
-                returnDesc = new PrimitiveTypeMethodReturnDesc( PrimitiveTypeDesc.parse($PRIMITIVE_TYPE.text) );
+                returnDesc = new PrimitiveTypeMethodReturnDesc( AST_PrimitiveType.parse($PRIMITIVE_TYPE.text) );
             }
         |
         VOID
@@ -129,7 +129,7 @@ method returns [MethodDesc value]:
     {
         //TODO: If returnDesc != null
         //TODO: parameters != null
-        $value = new MethodDesc( returnDesc, id, parameters);
+        $value = new AST_Method( returnDesc, id, parameters);
     }
     SEMICOLON
 ;
@@ -141,7 +141,7 @@ parameter returns [AbstractParameterDesc value]: //
         {
             ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
             if( references != null ) {
-                ClassNode classNode = (ClassNode) wrappersDescription.packageTree.addNode( $dotted_string.text, references );
+                ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text, references );
                 $value = new ClassParameterDesc( classNode );
             } else {
                 //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
@@ -151,7 +151,7 @@ parameter returns [AbstractParameterDesc value]: //
     |
         PRIMITIVE_TYPE
         {
-            $value = new PrimitiveParameterDesc( PrimitiveTypeDesc.parse($PRIMITIVE_TYPE.text) );
+            $value = new PrimitiveParameterDesc( AST_PrimitiveType.parse($PRIMITIVE_TYPE.text) );
         }
     )
     ID
