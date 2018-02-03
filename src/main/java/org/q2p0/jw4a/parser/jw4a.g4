@@ -32,25 +32,32 @@ wrappers returns [WrappersDesc desc]:
     }
 ;
 
-// package_description: dotted_string BRACKET_OPEN class_description* BRACKET_CLOSE;
+// package_description: dotted_string BRACKET_OPEN ( package_description | class_description )* BRACKET_CLOSE;
 package_description:
     dotted_string
     BRACKET_OPEN
     (
-        class_description[ $dotted_string.text ]
+            package_description
+            {
+            }
+        |
+            class_description[ $dotted_string.text ]
+            {
+            }
     )*
     BRACKET_CLOSE
 ;
 
-// class_description: ID BRACKET_OPEN method* BRACKET_CLOSE;
+// class_description: CLASS ID BRACKET_OPEN method* BRACKET_CLOSE;
 class_description [String _package] returns [ClassDesc cd]:
+    CLASS
     {
-        String classID = $ID.text;
         ClassNode classNode = null;
         ArrayList<MethodDesc> methods = new ArrayList<MethodDesc>();
     }
     ID
     {
+        String classID = $ID.text;
         String fullClassPath = $_package + "." + $ID.text;
         ArrayList<PairClassApi> references = reflection.existClass( fullClassPath );
         if( references != null ) {
@@ -154,6 +161,8 @@ parameter returns [AbstractParameterDesc value]: //
 ;
 
 dotted_string : (ID DOT)* ID;
+
+CLASS : 'class';
 
 PRIMITIVE_TYPE : 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' | 'char' | 'boolean';
 VOID: 'void';
