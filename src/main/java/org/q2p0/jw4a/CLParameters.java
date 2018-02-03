@@ -38,6 +38,10 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
     private static final String API_LEVEL_KEY = "al";
     int minApi, maxApi;
 
+    private static final String OUTPUT_DIRECTORY = "o";
+    private static final String OUTPUT_DIRECTORY_DEFAULT = "jw4a_classes";
+    String outputDirectory;
+
     // Command line args parse method
     void parseArgs(String[] args ) {
 
@@ -56,10 +60,16 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
                 +"'-"+API_LEVEL_KEY+" 21' or a range '-"+API_LEVEL_KEY+" 21-26'.")
                 .hasArg().required(true).build(); //TODO: Make it not required when user can search definition only for his custom classes
 
+        Option output = Option.builder(OUTPUT_DIRECTORY).longOpt("output")
+                .desc("Path to the directory where the jw4a will be created. " +
+                "If not defined, '" + OUTPUT_DIRECTORY_DEFAULT + "' " + "will be used.")
+                .hasArg().required(false).build();
+
         Options options = new Options()
                 .addOption( android_home_option )
                 .addOption( definitions_file )
-                .addOption( api_level );
+                .addOption( api_level )
+                .addOption( output );
 
         CommandLine cmd = null;
         CommandLineParser parser = new DefaultParser();
@@ -103,7 +113,7 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
                     System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
                 }
             }
-            if( androidHome.charAt( androidHome.length() - 1 ) == '/' ) //TODO: Compile and check on WINDOWS SO
+            if( androidHome.charAt( androidHome.length() - 1 ) == File.separatorChar )
                 androidHome = androidHome.substring( 0, androidHome.length() - 2 );
             //TODO: Check that exist & is an directory
 
@@ -135,6 +145,24 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
             } else {
                 System.err.println("ERROR: Api levels must be a concrete value '21' or a range '21-26'");
                 System.exit(ExitErrorCodes.APILEVELS_REGEX_FAIL);
+            }
+
+        }
+
+        // Output directory
+
+        outputDirectory = cmd.getOptionValue( OUTPUT_DIRECTORY );
+        if( outputDirectory == null )
+            outputDirectory = OUTPUT_DIRECTORY_DEFAULT;
+        File od = new File(outputDirectory);
+        if( od.exists() ) {
+            //TODO: Delete
+            //TODO: Show deletion warning message
+        }
+        if( !od.exists() ) {
+            try{ od.mkdir(); }
+            catch(SecurityException se){
+                //TODO: Error
             }
         }
     }

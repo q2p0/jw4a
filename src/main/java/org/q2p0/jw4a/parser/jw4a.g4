@@ -2,6 +2,7 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
 //TODO WARNING: Test with Classes that don't belong to any package
 //TODO: Create one TODO.TXT file for big goals
+//TODO: Compile and check on WINDOWS SO
 
 @parser::header{
 
@@ -49,9 +50,10 @@ package_description:
 ;
 
 // class_description: CLASS ID BRACKET_OPEN method* BRACKET_CLOSE;
-class_description [String _package] returns [AST_Class cd]:
+class_description [String _package] :
     CLASS
     {
+        AST_Class cd = null;
         ClassNode classNode = null;
         ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
@@ -79,7 +81,8 @@ class_description [String _package] returns [AST_Class cd]:
     {
         //TODO: if classNode is null
         //TODO: if methods is empty
-        $cd = new AST_Class( classID, classNode, methods );
+        cd = new AST_Class( classID, classNode, methods );
+        description.classDescriptions.add( cd );
     }
 ;
 
