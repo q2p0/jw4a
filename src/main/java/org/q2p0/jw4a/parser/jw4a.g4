@@ -61,7 +61,7 @@ class_description [String _package] returns [ClassDesc cd]:
         String fullClassPath = $_package + "." + $ID.text;
         ArrayList<PairClassApi> references = reflection.existClass( fullClassPath );
         if( references != null ) {
-            classNode = (ClassNode) wrappersDescription.packageThree.addNode( fullClassPath, references );
+            classNode = (ClassNode) wrappersDescription.packageTree.addNode( fullClassPath, references );
         } else {
             //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
             //TODO: Rule must return null
@@ -93,7 +93,7 @@ method returns [MethodDesc value]:
             {
                 ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
                 if( references != null ) {
-                    ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
+                    ClassNode classNode = (ClassNode) wrappersDescription.packageTree.addNode( $dotted_string.text, references );
                     returnDesc = new ClassMethodReturnDesc( classNode );
                 } else {
                     //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
@@ -141,7 +141,7 @@ parameter returns [AbstractParameterDesc value]: //
         {
             ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
             if( references != null ) {
-                ClassNode classNode = (ClassNode) wrappersDescription.packageThree.addNode( $dotted_string.text, references );
+                ClassNode classNode = (ClassNode) wrappersDescription.packageTree.addNode( $dotted_string.text, references );
                 $value = new ClassParameterDesc( classNode );
             } else {
                 //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description

@@ -4,6 +4,6 @@ import org.q2p0.jw4a.abstractDesc.JObjectsTree.PackageNode;
 
 public class WrappersDesc {
 
-    public PackageNode packageThree = new PackageNode(null); //Todo rename Three with Tree
+    public PackageNode packageTree = new PackageNode(null);
 
 }
