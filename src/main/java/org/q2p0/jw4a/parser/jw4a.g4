@@ -15,6 +15,8 @@ grammar jw4a; //TODO: Change grammar to Jw4a
     import org.q2p0.jw4a.ast.nodes.methodReturn.*;
     import org.q2p0.jw4a.ast.JObjectsTree.*;
 
+    import org.q2p0.jw4a.generator.*;
+
     import java.lang.StringBuilder;
 
 }
@@ -23,13 +25,13 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
     ReflectionManager reflection = ReflectionManager.GetInstance();
     Description description = new Description();
-
+    CodeGenerator codeGenerator = new WrapperCodeGenerator();
 }
 
-wrappers returns [Description desc]:
+wrappers :
     package_description*
     {
-        $desc = description;
+        codeGenerator.generate( description );
     }
 ;
 
@@ -40,11 +42,11 @@ package_description:
     (
             package_description
             {
+                if("TRUE".equals("TRUE"))
+                    throw new RuntimeException("Implement subpackages");
             }
         |
             class_description[ $dotted_string.text ]
-            {
-            }
     )*
     BRACKET_CLOSE
 ;
