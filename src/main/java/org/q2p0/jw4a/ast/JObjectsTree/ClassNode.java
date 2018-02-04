@@ -6,8 +6,8 @@ public class ClassNode extends AbstractNode {
 
     public ArrayList<PairClassApi> pairClassApi;
 
-    public ClassNode(String id, ArrayList<PairClassApi> pca) {
-        super(id);
+    public ClassNode(String id, AbstractNode parent, ArrayList<PairClassApi> pca) {
+        super(id, parent);
         pairClassApi = pca;
     }
 

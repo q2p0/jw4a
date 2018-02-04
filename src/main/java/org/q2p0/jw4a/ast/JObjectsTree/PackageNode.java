@@ -8,7 +8,7 @@ public class PackageNode extends AbstractNode {
     private HashMap<String, PackageNode> subPackages = new HashMap<String, PackageNode>();
     private HashMap<String, ClassNode> subClasses = new HashMap<String, ClassNode>();
 
-    public PackageNode(String id) { super(id); }
+    public PackageNode(String id, AbstractNode parent) { super(id, parent); }
 
     //TODO: Rename to addClass
     @Override public AbstractNode addNode(String s, ArrayList<PairClassApi> pca) {
@@ -22,7 +22,7 @@ public class PackageNode extends AbstractNode {
         if( firstDot == -1 ) {
             returnedAbstractNode = subClasses.get( s );
             if( returnedAbstractNode == null ) {
-                returnedAbstractNode = new ClassNode( s, pca);
+                returnedAbstractNode = new ClassNode( s, this, pca);
                 subClasses.put( s , (ClassNode) returnedAbstractNode);
             }
         } else {
@@ -30,7 +30,7 @@ public class PackageNode extends AbstractNode {
             String tail = s.substring( firstDot + 1);
             PackageNode packageNode = subPackages.get( head );
             if( packageNode == null ) {
-                packageNode = new PackageNode( head );
+                packageNode = new PackageNode( head , this);
                 subPackages.put( head, packageNode );
             }
             returnedAbstractNode = packageNode.addNode( tail, pca );

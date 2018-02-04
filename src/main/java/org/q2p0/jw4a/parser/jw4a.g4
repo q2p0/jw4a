@@ -31,6 +31,7 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 wrappers :
     package_description*
     {
+        System.out.println();
         codeGenerator.generate( description );
     }
 ;

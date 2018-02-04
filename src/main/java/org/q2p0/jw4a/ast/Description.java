@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class Description {
 
-    public PackageNode packageTree = new PackageNode(null);
+    public PackageNode packageTree = new PackageNode(null, null);
     public ArrayList<AST_Class> classDescriptions = new ArrayList<AST_Class>();
 
 }
