@@ -92,8 +92,9 @@ class_description [String _package] :
     {
         //TODO: if classNode is null
         //TODO: if methods is empty
+        //TODO: GetPrevious descriptions or show an error
 
-        description.classDescriptions.add( ast_class );
+        description.classDescriptions.put( fullClassPath, ast_class );
     }
 ;
 
