@@ -11,7 +11,7 @@ public class PackageNode extends AbstractNode {
     public PackageNode(String id, AbstractNode parent) { super(id, parent); }
 
     //TODO: Rename to addClass
-    @Override public AbstractNode addNode(String s, ArrayList<PairClassApi> pca) {
+    @Override public AbstractNode addNode(String s) {
 
         AbstractNode returnedAbstractNode = null;
 
@@ -22,7 +22,7 @@ public class PackageNode extends AbstractNode {
         if( firstDot == -1 ) {
             returnedAbstractNode = subClasses.get( s );
             if( returnedAbstractNode == null ) {
-                returnedAbstractNode = new ClassNode( s, this, pca);
+                returnedAbstractNode = new ClassNode( s, this );
                 subClasses.put( s , (ClassNode) returnedAbstractNode);
             }
         } else {
@@ -33,7 +33,7 @@ public class PackageNode extends AbstractNode {
                 packageNode = new PackageNode( head , this);
                 subPackages.put( head, packageNode );
             }
-            returnedAbstractNode = packageNode.addNode( tail, pca );
+            returnedAbstractNode = packageNode.addNode( tail );
         }
 
         return returnedAbstractNode;

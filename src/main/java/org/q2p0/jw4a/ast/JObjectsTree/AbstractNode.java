@@ -7,5 +7,5 @@ public abstract class AbstractNode {
     private String id;
     AbstractNode parent;
     AbstractNode(String id, AbstractNode parent) { this.id = id; this.parent = parent; }
-    public abstract AbstractNode addNode(String s, ArrayList<PairClassApi> pca);
+    public abstract AbstractNode addNode(String s);
 }
