@@ -1,12 +1,11 @@
 package org.q2p0.jw4a;
 
-import org.q2p0.jw4a.ast.JObjectsTree.PairClassApi;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReflectionManager {
 
@@ -32,7 +31,7 @@ public class ReflectionManager {
 
     // CTOR
 
-    //TODO WARNING: User use jw4a for custom classes only
+    //TODO: WARNING: User use jw4a for custom classes only
     private ReflectionManager() {
 
         super();
@@ -62,42 +61,33 @@ public class ReflectionManager {
 
     }
 
-    public ArrayList<PairClassApi> existClass(String name, int minApi, int maxApi) {
+    public Map< Integer, Class > getClasses(String name, int minApi, int maxApi) {
 
-        ArrayList<PairClassApi> returnedArray = new ArrayList<PairClassApi>();
+        Map< Integer, Class > returnedHash = new HashMap<>();
 
-        //TODO: TRY TO FIND IN USER_LOADERS AND IF FOUND
+        for(int api = minApi; api <= maxApi; api++ ) {
 
-            //TODO: Check minApi & maxApi is inside MINAPI_CL && MAXAPI_CL range
+            URLClassLoader classLoader = ANDROID_LOADERS[ api - MINAPI_CL ];
+            Class _class = null;
+            try { _class = Class.forName( name, false, classLoader);
+            } catch (ClassNotFoundException e) { /*_class will be null*/ }
 
-            for(int api = minApi; api <= maxApi; api++ ) {
-
-                URLClassLoader classLoader = ANDROID_LOADERS[ api - MINAPI_CL ];
-                Class _class = null;
-                try { _class = Class.forName( name, false, classLoader);
-                } catch (ClassNotFoundException e) { /*_class will be null*/ }
-
-                if( _class != null ) {
-                    PairClassApi refClassApi = new PairClassApi();
-                    refClassApi._class = _class;
-                    refClassApi._api = api;
-                    returnedArray.add( refClassApi );
-                } else {
-                    System.err.println("WARNING: The class " + name + " has been not found on Android.jar API Level " + api);
-                    //TODO: Add message showing how use anotations to avoid the warning
-                }
+            if( _class != null ) {
+                returnedHash.put( api, _class );
+            } else {
+                System.err.println("WARNING: The class " + name + " has been not found on Android.jar API Level " + api);
+                //TODO: Add message showing how use anotations to avoid the warning
             }
+        }
 
-            if( returnedArray.size() == 0 )
-                returnedArray = null;
+        if( returnedHash.size() == 0 )
+            returnedHash = null;
 
-        //TODO: }
-
-        return returnedArray;
+        return returnedHash;
     }
 
-    public ArrayList<PairClassApi>  existClass(String name) {
-        return existClass( name, MINAPI_CL, MAXAPI_CL);
+    public Map< Integer, Class > getClasses(String name ) {
+        return getClasses(name, MINAPI_CL, MAXAPI_CL);
     }
 
 }

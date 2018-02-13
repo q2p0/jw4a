@@ -19,6 +19,8 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
     import java.lang.StringBuilder;
 
+    import java.util.HashMap;
+    import java.util.Map;
 }
 
 @parser::members{
@@ -56,7 +58,7 @@ package_description:
 class_description [String _package] :
     CLASS
     {
-        AST_Class cd = null;
+        AST_Class ast_class = null;
         ClassNode classNode = null;
         ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
@@ -64,17 +66,23 @@ class_description [String _package] :
     {
         String classID = $ID.text;
         String fullClassPath = $_package + "." + $ID.text;
-        ArrayList<PairClassApi> references = reflection.existClass( fullClassPath );
+        Map<Integer, Class> references = reflection.getClasses( fullClassPath );
+
         if( references != null ) {
-            classNode = (ClassNode) description.packageTree.addNode( fullClassPath, references );
+            classNode = (ClassNode) description.packageTree.addNode( fullClassPath );
         } else {
             //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
             //TODO: Rule must return null
         }
+
+        //TODO: ADD SUPPER CLASSES
+
+        ast_class = new AST_Class( classID, classNode, references );
+
     }
     BRACKET_OPEN
     (
-        method
+        method[ ast_class ]
         {
             if( $method.value != null )
                 methods.add( $method.value );
@@ -84,27 +92,24 @@ class_description [String _package] :
     {
         //TODO: if classNode is null
         //TODO: if methods is empty
-        cd = new AST_Class( classID, classNode, methods );
-        description.classDescriptions.add( cd );
+
+        description.classDescriptions.add( ast_class );
     }
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
-method returns [AST_Method value]:
+method [AST_Class belongsClass] returns [AST_Method value]:
     {
         AST_AbstractMethodReturn returnDesc = null;
     }
     (
         dotted_string
             {
-                ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
-                if( references != null ) {
-                    ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text, references );
-                    returnDesc = new AST_ClassMethodReturn( classNode );
-                } else {
-                    //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
-                    //TODO: Rule must return null
-                }
+                //TODO: Search on reflectionManager
+                //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
+                //TODO: Rule must return null
+                ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text );
+                returnDesc = new AST_ClassMethodReturn( classNode );
             }
         |
         PRIMITIVE_TYPE
@@ -145,14 +150,11 @@ parameter returns [AST_AbstractParameter value]: //
     (
         dotted_string
         {
-            ArrayList<PairClassApi> references = reflection.existClass( $dotted_string.text );
-            if( references != null ) {
-                ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text, references );
-                $value = new AST_ClassParameter( classNode );
-            } else {
-                //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
-                //TODO: Rule must return null
-            }
+            //TODO: Search on reflectionManager
+            //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
+            //TODO: Rule must return null
+            ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text );
+            $value = new AST_ClassParameter( classNode );
         }
     |
         PRIMITIVE_TYPE
