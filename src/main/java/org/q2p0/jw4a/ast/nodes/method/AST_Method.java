@@ -1,7 +1,7 @@
-package org.q2p0.jw4a.ast.nodes;
+package org.q2p0.jw4a.ast.nodes.method;
 
-import org.q2p0.jw4a.ast.nodes.methodReturn.AST_AbstractMethodReturn;
-import org.q2p0.jw4a.ast.nodes.parameter.AST_AbstractParameter;
+import org.q2p0.jw4a.ast.nodes.method.methodReturn.AST_AbstractMethodReturn;
+import org.q2p0.jw4a.ast.nodes.method.parameter.AST_AbstractParameter;
 
 import java.util.ArrayList;
 

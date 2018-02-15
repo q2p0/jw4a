@@ -1,6 +1,7 @@
 package org.q2p0.jw4a.ast.nodes;
 
 import org.q2p0.jw4a.ast.JObjectsTree.ClassNode;
+import org.q2p0.jw4a.ast.nodes.method.AST_Method;
 
 import java.util.ArrayList;
 import java.util.Map;

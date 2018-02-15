@@ -11,8 +11,9 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
     import org.q2p0.jw4a.ast.*;
     import org.q2p0.jw4a.ast.nodes.*;
-    import org.q2p0.jw4a.ast.nodes.parameter.*;
-    import org.q2p0.jw4a.ast.nodes.methodReturn.*;
+    import org.q2p0.jw4a.ast.nodes.method.*;
+    import org.q2p0.jw4a.ast.nodes.method.parameter.*;
+    import org.q2p0.jw4a.ast.nodes.method.methodReturn.*;
     import org.q2p0.jw4a.ast.JObjectsTree.*;
 
     import org.q2p0.jw4a.generator.*;

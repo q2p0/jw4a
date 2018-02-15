@@ -1,4 +1,4 @@
-package org.q2p0.jw4a.ast.nodes.methodReturn;
+package org.q2p0.jw4a.ast.nodes.method.methodReturn;
 
 import org.q2p0.jw4a.ast.JObjectsTree.ClassNode;
 
