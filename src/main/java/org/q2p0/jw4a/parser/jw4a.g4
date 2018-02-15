@@ -58,27 +58,12 @@ package_description:
 class_description [String _package] :
     CLASS
     {
-        AST_Class ast_class = null;
         ClassNode classNode = null;
         ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
     ID
     {
-        String classID = $ID.text;
-        String fullClassPath = $_package + "." + $ID.text;
-        Map<Integer, Class> references = reflection.getClasses( fullClassPath );
-
-        if( references != null ) {
-            classNode = (ClassNode) description.packageTree.addNode( fullClassPath );
-        } else {
-            //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
-            //TODO: Rule must return null
-        }
-
-        //TODO: ADD SUPPER CLASSES
-
-        ast_class = new AST_Class( classID, classNode, references );
-
+        AST_Class ast_class = description.addClass( $_package, $ID.text );
     }
     BRACKET_OPEN
     (
@@ -93,8 +78,6 @@ class_description [String _package] :
         //TODO: if classNode is null
         //TODO: if methods is empty
         //TODO: GetPrevious descriptions or show an error
-
-        description.classDescriptions.put( fullClassPath, ast_class );
     }
 ;
 
