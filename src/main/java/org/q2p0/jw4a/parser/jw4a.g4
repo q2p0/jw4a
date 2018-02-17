@@ -6,33 +6,23 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
 @parser::header{
 
-    import org.q2p0.jw4a.ReflectionManager;
-    import org.q2p0.jw4a.CLParameters;
-
     import org.q2p0.jw4a.ast.*;
     import org.q2p0.jw4a.ast.nodes.*;
     import org.q2p0.jw4a.ast.nodes.method.*;
     import org.q2p0.jw4a.ast.nodes.method.parameter.*;
     import org.q2p0.jw4a.ast.nodes.method.methodReturn.*;
-    import org.q2p0.jw4a.ast.JObjectsTree.*;
 
     import org.q2p0.jw4a.generator.*;
 
-    import java.lang.StringBuilder;
-
-    import java.util.HashMap;
-    import java.util.Map;
 }
 
 @parser::members{
-
-    ReflectionManager reflection = ReflectionManager.GetInstance();
     Description description = new Description();
     CodeGenerator codeGenerator = new WrapperCodeGenerator();
 }
 
 wrappers :
-    package_description*
+    package_description[ description.root ]*
     {
         System.out.println();
         codeGenerator.generate( description );
@@ -40,46 +30,37 @@ wrappers :
 ;
 
 // package_description: dotted_string BRACKET_OPEN ( package_description | class_description )* BRACKET_CLOSE;
-package_description:
-    dotted_string
+package_description [AST_Package parentPackage]:
+    dotted_string //TODO: root package
+    {
+        AST_Package _package = description.getOrAddPackage( parentPackage, $dotted_string.text );
+    }
     BRACKET_OPEN
     (
-            package_description
-            {
-                if("TRUE".equals("TRUE"))
-                    throw new RuntimeException("Implement subpackages");
-            }
+            package_description[ _package ]
         |
-            class_description[ $dotted_string.text ]
+            class_description[ _package ]
     )*
     BRACKET_CLOSE
 ;
 
 // class_description: CLASS ID BRACKET_OPEN method* BRACKET_CLOSE;
-class_description [String _package] :
-    CLASS
+class_description [AST_Package _package] :
+    CLASS ID
     {
-        ClassNode classNode = null;
-        ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
-    }
-    ID
-    {
-        AST_Class ast_class = description.addClass( $_package, $ID.text );
+        AST_Class ast_class = description.getOrAddClass( $_package, $ID.text );
     }
     BRACKET_OPEN
+    {
+        ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
+    }
     (
         method[ ast_class ]
         {
-            if( $method.value != null )
-                methods.add( $method.value );
+            ast_class.methods.add( $method.value ); //TODO: Don't add same signature methods
         }
     )*
     BRACKET_CLOSE
-    {
-        //TODO: if classNode is null
-        //TODO: if methods is empty
-        //TODO: GetPrevious descriptions or show an error
-    }
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
@@ -90,11 +71,8 @@ method [AST_Class belongsClass] returns [AST_Method value]:
     (
         dotted_string
             {
-                //TODO: Search on reflectionManager
-                //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
-                //TODO: Rule must return null
-                ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text );
-                returnDesc = new AST_ClassMethodReturn( classNode );
+                AST_Class parameterClass = description.getOrAddClass( $dotted_string.text );
+                returnDesc = new AST_ClassMethodReturn( parameterClass );
             }
         |
         PRIMITIVE_TYPE
@@ -113,21 +91,37 @@ method [AST_Class belongsClass] returns [AST_Method value]:
     }
     PARENTHESIS_OPEN
     {
-        ArrayList<AST_AbstractParameter> parameters = new ArrayList<AST_AbstractParameter>();
+        List<AST_AbstractParameter> parameters = null;
     }
     (
-        parameter
-        {
-            parameters.add( $parameter.value );
-        }
-    )*
+        parameters
+            {
+                parameters = $parameters.value;
+            }
+    )?
     PARENTHESIS_CLOSE
     {
-        //TODO: If returnDesc != null
-        //TODO: parameters != null
         $value = new AST_Method( returnDesc, id, parameters);
     }
     SEMICOLON
+;
+
+// parameters: parameter ( COMMA parameter )*
+parameters returns [List<AST_AbstractParameter> value]:
+    {
+        $value = new ArrayList<AST_AbstractParameter>();
+    }
+    p1=parameter
+    {
+        $value.add( $p1.value );
+    }
+    (
+        COMMA
+        p2=parameter
+        {
+            $value.add( $p2.value );
+        }
+    )*
 ;
 
 // parameter : ( dotted_string | PRIMITIVE_TYPE ) ID ;
@@ -135,11 +129,8 @@ parameter returns [AST_AbstractParameter value]: //
     (
         dotted_string
         {
-            //TODO: Search on reflectionManager
-            //TODO: Show an message: Class has not been found, no wrappers will be constructed for line, colum class description
-            //TODO: Rule must return null
-            ClassNode classNode = (ClassNode) description.packageTree.addNode( $dotted_string.text );
-            $value = new AST_ClassParameter( classNode );
+            AST_Class parameterClass = description.getOrAddClass( $dotted_string.text );
+            $value = new AST_ClassParameter( parameterClass );
         }
     |
         PRIMITIVE_TYPE
@@ -153,13 +144,14 @@ parameter returns [AST_AbstractParameter value]: //
     }
 ;
 
-dotted_string : (ID DOT)* ID;
+dotted_string : ID (DOT ID)* ;
 
 CLASS : 'class';
 
 PRIMITIVE_TYPE : 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' | 'char' | 'boolean';
 VOID: 'void';
 
+COMMA: ',';
 DOT: '.';
 BRACKET_OPEN: '{';
 BRACKET_CLOSE: '}';

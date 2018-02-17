@@ -1,11 +1,10 @@
 package org.q2p0.jw4a.ast.nodes.method.parameter;
 
-import org.q2p0.jw4a.ast.JObjectsTree.ClassNode;
+import org.q2p0.jw4a.ast.nodes.AST_Class;
 
 public class AST_ClassParameter extends AST_AbstractParameter {
-    public ClassNode classNode;
-
-    public AST_ClassParameter(ClassNode classNode) {
-        this.classNode = classNode;
+    public AST_Class astClass;
+    public AST_ClassParameter(AST_Class astClass) {
+        this.astClass = astClass;
     }
 }
