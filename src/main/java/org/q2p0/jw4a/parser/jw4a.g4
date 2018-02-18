@@ -17,15 +17,15 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 }
 
 @parser::members{
-    Description description = new Description();
+    AST_Builder astBuilder = new AST_Builder();
     CodeGenerator codeGenerator = new WrapperCodeGenerator();
 }
 
 wrappers :
-    package_description[ description.root ]*
+    package_description[ astBuilder.root ]*
     {
         System.out.println();
-        codeGenerator.generate( description );
+        codeGenerator.generate( astBuilder );
     }
 ;
 
@@ -33,7 +33,7 @@ wrappers :
 package_description [AST_Package parentPackage]:
     dotted_string //TODO: root package
     {
-        AST_Package _package = description.getOrAddPackage( parentPackage, $dotted_string.text );
+        AST_Package _package = astBuilder.getOrAddPackage( parentPackage, $dotted_string.text );
     }
     BRACKET_OPEN
     (
@@ -48,7 +48,7 @@ package_description [AST_Package parentPackage]:
 class_description [AST_Package _package] :
     CLASS ID
     {
-        AST_Class ast_class = description.getOrAddClass( $_package, $ID.text );
+        AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text );
     }
     BRACKET_OPEN
     {
@@ -71,7 +71,7 @@ method [AST_Class belongsClass] returns [AST_Method value]:
     (
         dotted_string
             {
-                AST_Class parameterClass = description.getOrAddClass( $dotted_string.text );
+                AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text );
                 returnDesc = new AST_ClassMethodReturn( parameterClass );
             }
         |
@@ -129,7 +129,7 @@ parameter returns [AST_AbstractParameter value]: //
     (
         dotted_string
         {
-            AST_Class parameterClass = description.getOrAddClass( $dotted_string.text );
+            AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text );
             $value = new AST_ClassParameter( parameterClass );
         }
     |

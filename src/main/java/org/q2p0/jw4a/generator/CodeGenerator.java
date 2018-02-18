@@ -1,7 +1,7 @@
 package org.q2p0.jw4a.generator;
 
-import org.q2p0.jw4a.ast.Description;
+import org.q2p0.jw4a.ast.AST_Builder;
 
 public interface CodeGenerator {
-    void generate(Description description);
+    void generate(AST_Builder ASTBuilder);
 }

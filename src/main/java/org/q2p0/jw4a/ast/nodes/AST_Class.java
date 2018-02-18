@@ -20,7 +20,7 @@ public class AST_Class {
     public Map< Integer, Class > apiReflectionClasses;
     public List<AST_Method> methods = new ArrayList<>();
 
-    //TODO: public Map< Integer, AST_Class > _baseClass;
+    public Map< Integer, AST_Class > superClass;
 
     // HashCode & Equals with (id, ast_package) field.
 

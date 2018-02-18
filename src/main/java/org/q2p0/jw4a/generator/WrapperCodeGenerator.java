@@ -1,11 +1,10 @@
 package org.q2p0.jw4a.generator;
 
-import org.q2p0.jw4a.ast.Description;
-import org.q2p0.jw4a.ast.nodes.AST_Class;
+import org.q2p0.jw4a.ast.AST_Builder;
 
 public class WrapperCodeGenerator implements CodeGenerator{
 
-    @Override public void generate(Description description) {
+    @Override public void generate(AST_Builder ASTBuilder) {
 
         /*
         for( AST_Class classdesc : description.astClassCache ) {
