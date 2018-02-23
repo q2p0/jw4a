@@ -19,7 +19,7 @@ public enum AST_PrimitiveType {
    }
 
    @Override public String toString() {
-      return type;
+      return type.toLowerCase();
    }
 
    private static final Map<String, AST_PrimitiveType> lookup = new HashMap<>();

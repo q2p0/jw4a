@@ -25,6 +25,8 @@ wrappers :
     package_description[ astBuilder.root ]*
     {
         System.out.println();
+        AST_TreePrint.print( astBuilder.root, 2 );
+
         codeGenerator.generate( astBuilder );
     }
 ;

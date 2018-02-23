@@ -1,5 +1,7 @@
 package org.q2p0.jw4a.util;
 
+import java.util.Set;
+
 public interface SetGet<K> {
 
     /**
@@ -23,5 +25,11 @@ public interface SetGet<K> {
      * @return The element passed as parameter or previous one inside the set with the same key.
      */
     K addOrGet(K element);
+
+    /**
+     * Returns a Set view of the keys contained in this map.
+     * @return a set view of the keys contained in this map
+     */
+    Set<K> keySet();
 
 }
