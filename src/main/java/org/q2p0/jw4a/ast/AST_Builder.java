@@ -44,17 +44,18 @@ public class AST_Builder {
                 throw new RuntimeException("Unimplemented situation"); //TODO: Show at least one descriptive message
             value.apiReflectionClasses = references;
 
-            //// TODO: Find all his base classes between minApi and maxApi
-            //for (Map.Entry<Integer, Class> entry : references.entrySet()) {
-            //    int api = entry.getKey();
-            //    Class _class = entry.getValue();
-            //    Class superClass = _class.getSuperclass();
-            //    if( superClass != null ) {
-            //        String superClassPath = superClass.getName();
-            //        AST_Class astSuperClass = getOrAddClass( superClassPath );
-            //        value.superClass.put(api, astSuperClass);
-            //    }
-            //}
+            // Find all his base classes between minApi and maxApi
+            // TODO: Refactor some code to ReflectionManager & change name to ReflectionHelper
+            for (Map.Entry<Integer, Class> entry : references.entrySet()) {
+                int api = entry.getKey();
+                Class _class = entry.getValue();
+                Class superClass = _class.getSuperclass();
+                if( superClass != null ) {
+                    String superClassPath = superClass.getName();
+                    AST_Class astSuperClass = getOrAddClass( superClassPath );
+                    value.superClass.put(api, astSuperClass);
+                }
+            }
         }
 
         return value;

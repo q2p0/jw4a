@@ -1,10 +1,10 @@
 package org.q2p0.jw4a.ast.nodes;
 
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
+import org.q2p0.jw4a.util.CollectionUtil;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class AST_Class {
 
@@ -19,7 +19,7 @@ public class AST_Class {
 
     public Map< Integer, Class > apiReflectionClasses;
     public List<AST_Method> methods = new ArrayList<>(); //TODO: Change to Map< Integer, AST_Method>
-    //TODO: public Map< Integer, AST_Class > superClass;
+    public Map< Integer, AST_Class > superClass = new HashMap<>();
 
     // HashCode & Equals with (id, ast_package) field.
 
@@ -37,13 +37,35 @@ public class AST_Class {
 
     // One line descriptive string 4 development & AST_TreePrint.
     @Override public String toString() {
+
         StringBuilder builder = new StringBuilder();
+
         builder.append("Class ");
         builder.append(id);
+
         builder.append(" [");
-        Stream<String> apis = apiReflectionClasses.keySet().stream().sorted().map( s->String.valueOf(s) );
-        builder.append( String.join(",", apis.collect( Collectors.toList() )));
+        builder.append( CollectionUtil.toRangeString(superClass.keySet()) );
         builder.append("]");
+
+        Set<AST_Class> superClassesSet = new HashSet<>( superClass.values() );
+        AST_Class superClassesArray[] = superClassesSet.toArray( new AST_Class[superClassesSet.size()] );
+        if( superClassesArray.length > 0 ) {
+            builder.append(" extends");
+            for(int i=0; i<superClassesArray.length; i++) {
+
+                builder.append(" ");
+                builder.append(superClassesArray[i].id );
+                builder.append(" [");
+
+                final int lambda_i = i;
+                List<Integer> apis = superClass.entrySet().stream().filter(m->superClassesArray[lambda_i].equals(m.getValue())).map(m->m.getKey()).collect(Collectors.toList());
+                String apis_str = CollectionUtil.toRangeString( apis );
+                builder.append( apis_str );
+
+                builder.append("]");
+            }
+        }
+
         return builder.toString();
     }
 }
