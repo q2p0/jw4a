@@ -1,8 +1,7 @@
 package org.q2p0.jw4a;
 
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
-import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.*;
+import org.q2p0.jw4a.parser.ParserErrorListener;
 import org.q2p0.jw4a.parser.jw4aLexer;
 import org.q2p0.jw4a.parser.jw4aParser;
 
@@ -28,8 +27,19 @@ public class Jw4a {
         CommonTokenStream tokenStream = new CommonTokenStream( lexer );
         jw4aParser parser = new jw4aParser( tokenStream );
 
-        parser.wrappers();
+        // Stop the parse process at first syntax error.
+        parser.removeErrorListeners();
+        parser.addErrorListener(new ParserErrorListener());
 
+        try {
+            parser.wrappers();
+        }catch (Exception e){
+            //TODO: Show pre-error message.
+            System.err.println( e.getMessage() );
+            return;
+        }
+
+        //TODO: Get the AST and call CodeGenerator
         System.out.println( );
         System.out.println( "Parser ends successfully");
     }
