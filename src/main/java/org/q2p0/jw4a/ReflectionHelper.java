@@ -7,14 +7,14 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReflectionManager {
+public class ReflectionHelper {
 
     // SINGLETON
 
-    private static ReflectionManager instance;
-    public static ReflectionManager GetInstance() {
+    private static ReflectionHelper instance;
+    public static ReflectionHelper GetInstance() {
         if(instance==null)
-            instance = new ReflectionManager();
+            instance = new ReflectionHelper();
         return instance;
     }
 
@@ -32,7 +32,7 @@ public class ReflectionManager {
     // CTOR
 
     //TODO: WARNING: User use jw4a for custom classes only
-    private ReflectionManager() {
+    private ReflectionHelper() {
 
         super();
 

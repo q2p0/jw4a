@@ -1,6 +1,6 @@
 package org.q2p0.jw4a.ast;
 
-import org.q2p0.jw4a.ReflectionManager;
+import org.q2p0.jw4a.ReflectionHelper;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
 import org.q2p0.jw4a.util.DottedString;
@@ -39,13 +39,13 @@ public class AST_Builder {
 
             // Find reflection references between minApi and maxApi
             String fullClassPath = String.join(".", _package.packagePath, classID);
-            Map<Integer, Class> references = ReflectionManager.GetInstance().getClasses( fullClassPath );
+            Map<Integer, Class> references = ReflectionHelper.GetInstance().getClasses( fullClassPath );
             if( references == null )
                 throw new RuntimeException("Unimplemented situation"); //TODO: Show at least one descriptive message
             value.apiReflectionClasses = references;
 
             // Find all his base classes between minApi and maxApi
-            // TODO: Refactor some code to ReflectionManager & change name to ReflectionHelper
+            // TODO: Refactor some code to ReflectionHelper & change name to ReflectionHelper
             for (Map.Entry<Integer, Class> entry : references.entrySet()) {
                 int api = entry.getKey();
                 Class _class = entry.getValue();
