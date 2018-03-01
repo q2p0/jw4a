@@ -45,17 +45,13 @@ public class AST_Builder {
             value.apiReflectionClasses = references;
 
             // Find all his base classes between minApi and maxApi
-            // TODO: Refactor some code to ReflectionHelper & change name to ReflectionHelper
-            for (Map.Entry<Integer, Class> entry : references.entrySet()) {
-                int api = entry.getKey();
-                Class _class = entry.getValue();
-                Class superClass = _class.getSuperclass();
-                if( superClass != null ) {
-                    String superClassPath = superClass.getName();
-                    AST_Class astSuperClass = getOrAddClass( superClassPath );
-                    value.superClass.put(api, astSuperClass);
-                }
+            Map<Integer, Class> superClasses = ReflectionHelper.GetInstance().getSuperClasses( references );
+            for (Map.Entry<Integer, Class> superClass : superClasses.entrySet()) {
+                String superClassPath = superClass.getValue().getName();
+                AST_Class astSuperClass = getOrAddClass( superClassPath );
+                value.superClass.put(superClass.getKey(), astSuperClass);
             }
+
         }
 
         return value;

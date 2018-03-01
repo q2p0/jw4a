@@ -90,4 +90,20 @@ public class ReflectionHelper {
         return getClasses(name, MINAPI_CL, MAXAPI_CL);
     }
 
+    public Map<Integer, Class> getSuperClasses(Map <Integer, Class> inheritClasses){
+
+        Map<Integer, Class> superClasses = new HashMap<>( inheritClasses.size() );
+
+        for (Map.Entry<Integer, Class> entry : inheritClasses.entrySet()) {
+            int api = entry.getKey();
+            Class _class = entry.getValue();
+            Class superClass = _class.getSuperclass();
+            if( superClass != null )
+                superClasses.put( api, superClass );
+        }
+
+        return superClasses;
+
+    }
+
 }
