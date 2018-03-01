@@ -4,6 +4,7 @@ import org.q2p0.jw4a.ast.nodes.method.methodReturn.AST_AbstractMethodReturn;
 import org.q2p0.jw4a.ast.nodes.method.parameter.AST_AbstractParameter;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class AST_Method {
@@ -36,5 +37,21 @@ public class AST_Method {
 
         return builder.toString();
 
+    }
+
+    // HashCode & Equals with (id, parameters) fields.
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AST_Method method = (AST_Method) o;
+        return Objects.equals(id, method.id) &&
+                Objects.equals(parameters, method.parameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, parameters);
     }
 }

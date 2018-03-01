@@ -33,7 +33,7 @@ public class AST_Class {
 
     @Override public int hashCode() {
         return Objects.hash(id, ast_package);
-    }
+    } //TODO: Maybe reduce hash to ast_package field
 
     // One line descriptive string 4 development & AST_TreePrint.
     @Override public String toString() {
