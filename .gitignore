@@ -9,4 +9,7 @@ jw4a.iml
 # Local files for development purpouses 
 /run.sh
 /Jw4aLists.txt
+/trash
 
+# SO directory files
+.directory
