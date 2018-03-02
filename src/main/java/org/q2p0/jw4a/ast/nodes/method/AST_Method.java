@@ -1,10 +1,15 @@
 package org.q2p0.jw4a.ast.nodes.method;
 
+import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.method.methodReturn.AST_AbstractMethodReturn;
 import org.q2p0.jw4a.ast.nodes.method.parameter.AST_AbstractParameter;
+import org.q2p0.jw4a.ast.nodes.method.parameter.AST_ClassParameter;
+import org.q2p0.jw4a.ast.nodes.method.parameter.AST_PrimitiveParameter;
+import org.q2p0.jw4a.util.CollectionUtil;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AST_Method {
@@ -54,4 +59,32 @@ public class AST_Method {
     public int hashCode() {
         return Objects.hash(id, parameters);
     }
+
+    // Get an array of Class objects for find method on reflection
+
+    public Class[] getParameterArray(int api){
+
+        Class classParameters[] = new Class[parameters.size()];
+        for(int i=0; i<classParameters.length; i++) {
+            AST_AbstractParameter ast_abstractParameter = parameters.get(i);
+            if( ast_abstractParameter instanceof AST_ClassParameter ){
+                AST_ClassParameter ast_classParameter = (AST_ClassParameter) ast_abstractParameter;
+                AST_Class ast_class = ast_classParameter.astClass;
+                Class refClass = ast_class.apiReflectionClasses.get( api );
+                if(refClass==null)
+                    throw new RuntimeException("Unimplemented class parameter don't have an reflection class object");
+                classParameters[i] = refClass;
+            } else if( ast_abstractParameter instanceof AST_PrimitiveParameter ) {
+                AST_PrimitiveParameter ast_primitiveParameter = (AST_PrimitiveParameter) ast_abstractParameter;
+                classParameters[i] = ast_primitiveParameter.primitiveType.toClass();
+            } else {
+                throw new RuntimeException("Unimplemented AST_AbstractParameter method parameter check");
+            }
+        }
+
+        return classParameters;
+
+    }
+
+
 }
