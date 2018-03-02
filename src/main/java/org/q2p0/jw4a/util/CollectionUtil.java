@@ -1,6 +1,6 @@
 package org.q2p0.jw4a.util;
 
-import java.util.Collection;
+import java.util.*;
 
 public class CollectionUtil {
 
@@ -32,6 +32,30 @@ public class CollectionUtil {
         }
 
         return stringBuilder.toString();
+
+    }
+
+    /**
+     * Reverse an MultiSetMap changing the roles between key and value.
+     * @param input Original MultiSetMap that will be reversed.
+     * @param <K> The key on the original MultiSetMap and the value on the reverse MultiSetMap.
+     * @param <V> The value on the original MultiSetMap and the key on the reverse MultiSetMap.
+     * @return The reversed MultiSetMap
+     */
+    static public <K,V> Map<V,Set<K>> reverseMultiSetMap( Map<K,Set<V>> input ){
+
+        Set<V> methodSet = new HashSet<>();
+        for( Set<V> methodList : input.values() )
+            methodSet.addAll( methodList );
+
+        Map<V, Set<K> > reverse = new HashMap<>( methodSet.size() );
+
+        for( V method : methodSet)
+            for( K i : input.keySet() )
+                if( input.get(i).contains(method) )
+                    reverse.computeIfAbsent( method, k->new HashSet<>() ).add( i );
+
+        return reverse;
 
     }
 }
