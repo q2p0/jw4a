@@ -3,6 +3,9 @@ package org.q2p0.jw4a.ast;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
+import org.q2p0.jw4a.util.CollectionUtil;
+
+import java.util.*;
 
 /**
  * Prints an description of the AST_Tree
@@ -35,19 +38,22 @@ public class AST_TreePrint {
 
         if( _class.methods.size() > 0 ) {
 
-            String nesting_member = nesting + new String(new char[NESTING]).replace('\0', ' ');
-
             System.out.println(" {");
-            for (AST_Method m : _class.methods)
-                System.out.println(nesting_member + m.toString());
+
+            String nesting_member = nesting + new String(new char[NESTING]).replace('\0', ' ');
+            Map< AST_Method, Set<Integer> > reverse = CollectionUtil.reverseMultiSetMap( _class.methods );
+            for( Map.Entry<AST_Method, Set<Integer>> entry : reverse.entrySet())
+                System.out.println(nesting_member + entry.getKey().toString( entry.getValue() ));
+
             System.out.println(nesting + "}");
 
         } else {
 
-            System.out.println("{}");
+            System.out.println(" {}");
 
         }
 
     }
 
 }
+

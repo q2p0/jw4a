@@ -18,7 +18,7 @@ public class AST_Class {
     }
 
     public Map< Integer, Class > apiReflectionClasses;
-    public List<AST_Method> methods = new ArrayList<>(); //TODO: Change to Map< Integer, AST_Method>
+    public Map< Integer, Set<AST_Method> > methods = new HashMap<>();
     public Map< Integer, AST_Class > superClass = new HashMap<>();
 
     // HashCode & Equals with (id, ast_package) field.
@@ -43,8 +43,8 @@ public class AST_Class {
         builder.append("Class ");
         builder.append(id);
 
-        builder.append(" [");
-        builder.append( CollectionUtil.toRangeString(superClass.keySet()) );
+        builder.append("[");
+        builder.append( CollectionUtil.toRangeString(apiReflectionClasses.keySet()) );
         builder.append("]");
 
         Set<AST_Class> superClassesSet = new HashSet<>( superClass.values() );
@@ -55,7 +55,7 @@ public class AST_Class {
 
                 builder.append(" ");
                 builder.append(superClassesArray[i].id );
-                builder.append(" [");
+                builder.append("[");
 
                 final int lambda_i = i;
                 List<Integer> apis = superClass.entrySet().stream().filter(m->superClassesArray[lambda_i].equals(m.getValue())).map(m->m.getKey()).collect(Collectors.toList());

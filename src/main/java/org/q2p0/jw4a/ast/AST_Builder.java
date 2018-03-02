@@ -3,10 +3,13 @@ package org.q2p0.jw4a.ast;
 import org.q2p0.jw4a.ReflectionHelper;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
+import org.q2p0.jw4a.ast.nodes.method.AST_Method;
 import org.q2p0.jw4a.util.DottedString;
 import org.q2p0.jw4a.util.HashMapSetGet;
 import org.q2p0.jw4a.util.SetGet;
 
+import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Map;
 
 public class AST_Builder {
@@ -41,7 +44,7 @@ public class AST_Builder {
             String fullClassPath = String.join(".", _package.packagePath, classID);
             Map<Integer, Class> references = ReflectionHelper.GetInstance().getClasses( fullClassPath );
             if( references == null )
-                throw new RuntimeException("Unimplemented situation"); //TODO: Show at least one descriptive message
+                throw new RuntimeException("Unimplemented situation, no API references"); //TODO: Show at least one descriptive message
             value.apiReflectionClasses = references;
 
             // Find all his base classes between minApi and maxApi
@@ -69,6 +72,34 @@ public class AST_Builder {
             returnPackage = getOrAddPackage( returnPackage , tail);
 
         return returnPackage;
+
+    }
+
+    public void addMethodToClass(AST_Class ownerClass, AST_Method method) {
+
+        for (Map.Entry<Integer, Class> entry : ownerClass.apiReflectionClasses.entrySet()) {
+
+            int api = entry.getKey();
+            Class _class = entry.getValue();
+
+            Class classParameters[] = method.getParameterArray(api);
+
+            try {
+
+                Method m = _class.getDeclaredMethod(method.id, classParameters.length > 0 ? classParameters : null );
+                ownerClass.methods.computeIfAbsent( api, k->new HashSet<>() ).add( method );
+
+            } catch (NoSuchMethodException e) {
+
+                AST_Class superClass = ownerClass.superClass.get( api );
+                if(superClass != null)
+                    addMethodToClass(superClass,  method);
+
+            }
+
+            //TODO: Count references & check with @API
+
+        }
 
     }
 

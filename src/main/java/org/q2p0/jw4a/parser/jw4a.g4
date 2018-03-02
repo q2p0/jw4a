@@ -58,15 +58,12 @@ class_description [AST_Package _package] :
     }
     (
         method[ ast_class ]
-        {
-            ast_class.methods.add( $method.value ); //TODO: Don't add same signature methods
-        }
     )*
     BRACKET_CLOSE
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
-method [AST_Class belongsClass] returns [AST_Method value]:
+method [AST_Class classOwner] :
     {
         AST_AbstractMethodReturn returnDesc = null;
     }
@@ -103,7 +100,7 @@ method [AST_Class belongsClass] returns [AST_Method value]:
     )?
     PARENTHESIS_CLOSE
     {
-        $value = new AST_Method( returnDesc, id, parameters);
+        astBuilder.addMethodToClass( $classOwner, new AST_Method( returnDesc, id, parameters) );
     }
     SEMICOLON
 ;

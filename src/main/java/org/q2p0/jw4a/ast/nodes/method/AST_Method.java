@@ -27,12 +27,19 @@ public class AST_Method {
 
     // One line descriptive string 4 development & AST_TreePrint.
     @Override public String toString() {
-
+        return toString(null);
+    }
+    public String toString(Set<Integer> apiRanges) {
         StringBuilder builder = new StringBuilder();
 
         builder.append( this.returnDesc );
         builder.append( ' ' );
         builder.append( id );
+        if( apiRanges != null ) {
+            builder.append("[");
+            builder.append( CollectionUtil.toRangeString(apiRanges) );
+            builder.append("]");
+        }
         builder.append( "(" );
 
         List<String> parametersStr = parameters.stream().map( s->String.valueOf(s) ).collect( Collectors.toList() );
@@ -41,7 +48,6 @@ public class AST_Method {
         builder.append(");");
 
         return builder.toString();
-
     }
 
     // HashCode & Equals with (id, parameters) fields.
