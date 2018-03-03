@@ -24,7 +24,7 @@
     <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-runtime</artifactId>
-        <version>4.7.1</version>
+        <version>4.7</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
@@ -108,10 +108,11 @@
                 </configuration>
             </plugin>
 
+            <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-maven-plugin -->
             <plugin>
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-maven-plugin</artifactId>
-                <version>4.3</version>
+                <version>4.7</version>
                 <configuration>
                     <sourceDirectory>src/main/java</sourceDirectory>
                     <outputDirectory>src/main/generated-sources</outputDirectory>
