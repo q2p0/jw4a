@@ -1,7 +1,7 @@
 package org.q2p0.jw4a.ast.nodes;
 
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
-import org.q2p0.jw4a.util.CollectionUtil;
+import static org.q2p0.jw4a.util.CollectionUtil.toRangeString;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -44,7 +44,7 @@ public class AST_Class {
         builder.append(id);
 
         builder.append("[");
-        builder.append( CollectionUtil.toRangeString(apiReflectionClasses.keySet()) );
+        builder.append( toRangeString(apiReflectionClasses.keySet()) );
         builder.append("]");
 
         Set<AST_Class> superClassesSet = new HashSet<>( superClass.values() );
@@ -59,7 +59,7 @@ public class AST_Class {
 
                 final int lambda_i = i;
                 List<Integer> apis = superClass.entrySet().stream().filter(m->superClassesArray[lambda_i].equals(m.getValue())).map(m->m.getKey()).collect(Collectors.toList());
-                String apis_str = CollectionUtil.toRangeString( apis );
+                String apis_str = toRangeString( apis );
                 builder.append( apis_str );
 
                 builder.append("]");

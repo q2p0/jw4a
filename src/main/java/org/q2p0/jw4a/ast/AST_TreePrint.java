@@ -3,7 +3,7 @@ package org.q2p0.jw4a.ast;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
-import org.q2p0.jw4a.util.CollectionUtil;
+import static org.q2p0.jw4a.util.CollectionUtil.reverseMultiSetMap;
 
 import java.util.*;
 
@@ -41,7 +41,7 @@ public class AST_TreePrint {
             System.out.println(" {");
 
             String nesting_member = nesting + new String(new char[NESTING]).replace('\0', ' ');
-            Map< AST_Method, Set<Integer> > reverse = CollectionUtil.reverseMultiSetMap( _class.methods );
+            Map< AST_Method, Set<Integer> > reverse = reverseMultiSetMap( _class.methods );
             for( Map.Entry<AST_Method, Set<Integer>> entry : reverse.entrySet())
                 System.out.println(nesting_member + entry.getKey().toString( entry.getValue() ));
 

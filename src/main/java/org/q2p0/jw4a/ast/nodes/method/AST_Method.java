@@ -5,7 +5,7 @@ import org.q2p0.jw4a.ast.nodes.method.methodReturn.AST_AbstractMethodReturn;
 import org.q2p0.jw4a.ast.nodes.method.parameter.AST_AbstractParameter;
 import org.q2p0.jw4a.ast.nodes.method.parameter.AST_ClassParameter;
 import org.q2p0.jw4a.ast.nodes.method.parameter.AST_PrimitiveParameter;
-import org.q2p0.jw4a.util.CollectionUtil;
+import static org.q2p0.jw4a.util.CollectionUtil.toRangeString;
 
 import java.util.List;
 import java.util.Objects;
@@ -37,7 +37,7 @@ public class AST_Method {
         builder.append( id );
         if( apiRanges != null ) {
             builder.append("[");
-            builder.append( CollectionUtil.toRangeString(apiRanges) );
+            builder.append( toRangeString(apiRanges) );
             builder.append("]");
         }
         builder.append( "(" );
