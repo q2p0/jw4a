@@ -1,0 +1,5 @@
+android.os {
+    class Bundle{
+        java.lang.String getString( java.lang.String key );
+    }
+}
