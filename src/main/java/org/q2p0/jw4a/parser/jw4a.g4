@@ -17,11 +17,15 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 }
 
 @parser::members{
-    AST_Builder astBuilder = new AST_Builder();
+    AST_Builder astBuilder;
     CodeGenerator codeGenerator = new WrapperCodeGenerator();
+    ReflectionHelper reflectionHelper;
 }
 
-wrappers :
+wrappers [AST_Builder astBuilder]:
+    {
+        this.astBuilder = astBuilder;
+    }
     package_description[ astBuilder.root ]*
     {
         System.out.println();

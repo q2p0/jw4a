@@ -1,6 +1,7 @@
 package org.q2p0.jw4a;
 
 import org.antlr.v4.runtime.*;
+import org.q2p0.jw4a.ast.AST_Builder;
 import org.q2p0.jw4a.parser.ParserErrorListener;
 import org.q2p0.jw4a.parser.jw4aLexer;
 import org.q2p0.jw4a.parser.jw4aParser;
@@ -16,7 +17,8 @@ public class Jw4a {
         System.out.println();
 
         //TODO: Change to parameter initialization singleton
-        CLParameters clparser = CLParameters.GetInstance();
+        CLParameters clparser = new CLParameters();
+        //TODO: Add an method that return an Class that describe the command line arguments instead of passing the CLParameters class
         clparser.parseArgs( args );
 
         CharStream inputCharStream = null;
@@ -32,7 +34,9 @@ public class Jw4a {
         parser.addErrorListener(new ParserErrorListener());
 
         try {
-            parser.wrappers();
+            ReflectionHelper reflectionHelper = new ReflectionHelper(clparser);
+            AST_Builder ast_builder = new AST_Builder( reflectionHelper );
+            parser.wrappers( ast_builder );
         }catch (Exception e){
             //TODO: Show pre-error message.
             System.err.println( e.getMessage() );

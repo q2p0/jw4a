@@ -9,34 +9,27 @@ import java.util.Map;
 
 public class ReflectionHelper {
 
-    // SINGLETON
-
-    private static ReflectionHelper instance;
-    public static ReflectionHelper GetInstance() {
-        if(instance==null)
-            instance = new ReflectionHelper();
-        return instance;
-    }
-
     // COMMAND LINE ARGUMENTS
 
-    final String ANDROID_HOME;
-    final int    MINAPI_CL;
-    final int    MAXAPI_CL;
+    @Deprecated final String ANDROID_HOME;
+    @Deprecated final int    MINAPI_CL;
+    @Deprecated final int    MAXAPI_CL;
 
     // ClassLoaders to search for definitions inside Android
 
     final private URLClassLoader ANDROID_LOADERS[];
+    @Deprecated //TODO: Pass an CLParametersDescription
+    final private CLParameters clParameters;
     //TODO: final private URLClassLoader USER_LOADERS[];
 
     // CTOR
 
     //TODO: WARNING: User use jw4a for custom classes only
-    private ReflectionHelper() {
+    public ReflectionHelper( CLParameters clParameters ) {
 
         super();
 
-        CLParameters clParameters = CLParameters.GetInstance();
+        this.clParameters = clParameters;
 
         ANDROID_HOME = clParameters.androidHome;
         MINAPI_CL   = clParameters.minApi;

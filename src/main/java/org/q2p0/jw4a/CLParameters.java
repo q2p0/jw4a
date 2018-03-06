@@ -15,17 +15,6 @@ import java.util.regex.Pattern;
 
 public class CLParameters { //TODO: Rename to CLArgumentsParser
 
-    // SINGLETON & CTOR
-
-    private static CLParameters instance;
-    private CLParameters() { super(); }
-    static CLParameters GetInstance() {
-        if(instance==null)
-            instance = new CLParameters();
-        return instance;
-    }
-
-    // PARAMETERS
     //TODO: Add custom user java classes path parameters
 
     private static final String DEFINITION_FILE_KEY = "df";
@@ -35,7 +24,9 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
     private static final String ANDROID_HOME_KEY = "ah";
     String androidHome;
 
+    @Deprecated
     private static final String API_LEVEL_KEY = "al";
+    @Deprecated
     int minApi, maxApi;
 
     private static final String OUTPUT_DIRECTORY = "o";

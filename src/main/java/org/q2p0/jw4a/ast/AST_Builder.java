@@ -14,7 +14,11 @@ import java.util.Map;
 
 public class AST_Builder {
 
+    final private ReflectionHelper reflectionHelper;
     public AST_Package root = new AST_Package(null, null);
+    public AST_Builder(ReflectionHelper reflectionHelper) {
+        this.reflectionHelper = reflectionHelper;
+    }
 
     public SetGet< AST_Class > astClassCache = new HashMapSetGet<>();
     public AST_Class getOrAddClass( String fullClassPath ) {
@@ -42,13 +46,13 @@ public class AST_Builder {
 
             // Find reflection references between minApi and maxApi
             String fullClassPath = String.join(".", _package.packagePath, classID);
-            Map<Integer, Class> references = ReflectionHelper.GetInstance().getClasses( fullClassPath );
+            Map<Integer, Class> references = reflectionHelper.getClasses( fullClassPath );
             if( references == null )
                 throw new RuntimeException("Unimplemented situation, no API references"); //TODO: Show at least one descriptive message
             value.apiReflectionClasses = references;
 
             // Find all his base classes between minApi and maxApi
-            Map<Integer, Class> superClasses = ReflectionHelper.GetInstance().getSuperClasses( references );
+            Map<Integer, Class> superClasses = reflectionHelper.getSuperClasses( references );
             for (Map.Entry<Integer, Class> superClass : superClasses.entrySet()) {
                 String superClassPath = superClass.getValue().getName();
                 AST_Class astSuperClass = getOrAddClass( superClassPath );
