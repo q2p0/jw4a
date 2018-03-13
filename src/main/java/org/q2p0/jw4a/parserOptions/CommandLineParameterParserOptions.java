@@ -2,6 +2,8 @@ package org.q2p0.jw4a.parserOptions;
 
 import org.apache.commons.cli.*;
 import org.q2p0.jw4a.ExitErrorCodes;
+import org.q2p0.jw4a.reflection.ReflectionHelperOptions;
+import org.q2p0.jw4a.reflection.ReflectionHelperOptionsProvider;
 
 import java.io.File;
 import java.util.Map;
@@ -16,7 +18,7 @@ import static org.q2p0.jw4a.util.Application.getProgName;
 // - Parse and store the arguments values.
 // - Check the correction of the arguments and show an error in case of failure.
 
-public class CLParameters { //TODO: Rename to CLArgumentsParser
+public class CommandLineParameterParserOptions implements ReflectionHelperOptionsProvider { //TODO: Rename to CLArgumentsParser
 
     //TODO: Add custom user java classes path parameters
 
@@ -24,13 +26,13 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
     private static final String DEFINITION_FILE_DEFAULT = "Jw4aLists.txt";
     public String definitionFile;
 
+
     private static final String ANDROID_HOME_KEY = "ah";
     public String androidHome;
 
-    @Deprecated
-    private static final String API_LEVEL_KEY = "al";
-    @Deprecated
-    public int minApi, maxApi;
+    //TODO: Refactor to JW4A global expression.
+    @Deprecated private static final String API_LEVEL_KEY = "al";
+    @Deprecated public int minApi, maxApi;
 
     private static final String OUTPUT_DIRECTORY = "o";
     private static final String OUTPUT_DIRECTORY_DEFAULT = "jw4a_classes";
@@ -159,5 +161,13 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
                 //TODO: Error
             }
         }
+    }
+
+    @Override public ReflectionHelperOptions getReflectionHelperOptions() {
+        return new ReflectionHelperOptions() {
+            @Override public String getAndroidHome() { return androidHome; }
+            @Override public int getMinApi() { return minApi; }
+            @Override public int getMaxApi() { return maxApi; }
+        };
     }
 }

@@ -25,7 +25,7 @@ public class ReflectionHelper {
     // CTOR
 
     //TODO: WARNING: User use jw4a for custom classes only
-    public ReflectionHelper( ReflectionHelperBuildParams params ) {
+    public ReflectionHelper( ReflectionHelperOptions params ) {
 
         super();
 

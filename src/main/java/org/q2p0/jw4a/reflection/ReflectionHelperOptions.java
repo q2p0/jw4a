@@ -1,10 +1,11 @@
 package org.q2p0.jw4a.reflection;
 
-public interface ReflectionHelperBuildParams {
+public interface ReflectionHelperOptions {
 
     String getAndroidHome();
-    int getMinApi();
-    int getMaxApi();
+
+    @Deprecated int getMinApi();
+    @Deprecated int getMaxApi();
 
     //TODO: ArrayList<String> getClassPaths();
     //TODO: ArrayList<String> getJarPaths();
