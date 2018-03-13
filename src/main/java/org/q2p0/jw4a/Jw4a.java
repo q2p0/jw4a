@@ -5,6 +5,8 @@ import org.q2p0.jw4a.ast.AST_Builder;
 import org.q2p0.jw4a.parser.ParserErrorListener;
 import org.q2p0.jw4a.parser.jw4aLexer;
 import org.q2p0.jw4a.parser.jw4aParser;
+import org.q2p0.jw4a.reflection.ReflectionHelper;
+import org.q2p0.jw4a.reflection.ReflectionHelperBuildParams;
 
 import java.io.IOException;
 
@@ -20,6 +22,11 @@ public class Jw4a {
         CLParameters clparser = new CLParameters();
         //TODO: Add an method that return an Class that describe the command line arguments instead of passing the CLParameters class
         clparser.parseArgs( args );
+        ReflectionHelperBuildParams params = new ReflectionHelperBuildParams() {
+            @Override public String getAndroidHome() { return clparser.androidHome; }
+            @Override public int getMinApi() { return clparser.minApi; }
+            @Override public int getMaxApi() { return clparser.maxApi; }
+        };
 
         CharStream inputCharStream = null;
         try { inputCharStream = CharStreams.fromFileName( clparser.definitionFile ); }
@@ -34,7 +41,7 @@ public class Jw4a {
         parser.addErrorListener(new ParserErrorListener());
 
         try {
-            ReflectionHelper reflectionHelper = new ReflectionHelper(clparser);
+            ReflectionHelper reflectionHelper = new ReflectionHelper(params);
             AST_Builder ast_builder = new AST_Builder( reflectionHelper );
             parser.wrappers( ast_builder );
         }catch (Exception e){

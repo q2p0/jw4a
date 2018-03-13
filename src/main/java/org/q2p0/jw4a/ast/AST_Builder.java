@@ -1,6 +1,6 @@
 package org.q2p0.jw4a.ast;
 
-import org.q2p0.jw4a.ReflectionHelper;
+import org.q2p0.jw4a.reflection.ReflectionHelper;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;

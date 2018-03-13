@@ -1,4 +1,7 @@
-package org.q2p0.jw4a;
+package org.q2p0.jw4a.reflection;
+
+import org.q2p0.jw4a.CLParameters;
+import org.q2p0.jw4a.ExitErrorCodes;
 
 import java.io.File;
 import java.net.MalformedURLException;
@@ -11,29 +14,25 @@ public class ReflectionHelper {
 
     // COMMAND LINE ARGUMENTS
 
-    @Deprecated final String ANDROID_HOME;
-    @Deprecated final int    MINAPI_CL;
-    @Deprecated final int    MAXAPI_CL;
+    final String ANDROID_HOME;
+    final int    MINAPI_CL;
+    final int    MAXAPI_CL;
 
     // ClassLoaders to search for definitions inside Android
 
     final private URLClassLoader ANDROID_LOADERS[];
-    @Deprecated //TODO: Pass an CLParametersDescription
-    final private CLParameters clParameters;
     //TODO: final private URLClassLoader USER_LOADERS[];
 
     // CTOR
 
     //TODO: WARNING: User use jw4a for custom classes only
-    public ReflectionHelper( CLParameters clParameters ) {
+    public ReflectionHelper( ReflectionHelperBuildParams params ) {
 
         super();
 
-        this.clParameters = clParameters;
-
-        ANDROID_HOME = clParameters.androidHome;
-        MINAPI_CL   = clParameters.minApi;
-        MAXAPI_CL   = clParameters.maxApi;
+        ANDROID_HOME = params.getAndroidHome();
+        MINAPI_CL   = params.getMinApi();
+        MAXAPI_CL   = params.getMaxApi();
 
         ANDROID_LOADERS = new URLClassLoader[ MAXAPI_CL - MINAPI_CL + 1 ];
 

@@ -6,7 +6,7 @@ grammar jw4a; //TODO: Change grammar to Jw4a
 
 @parser::header{
 
-    import org.q2p0.jw4a.ReflectionHelper;
+    import org.q2p0.jw4a.reflection.ReflectionHelper;
     import org.q2p0.jw4a.ast.*;
     import org.q2p0.jw4a.ast.nodes.*;
     import org.q2p0.jw4a.ast.nodes.method.*;
