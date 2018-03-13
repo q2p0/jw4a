@@ -2,6 +2,7 @@ package org.q2p0.jw4a;
 
 import org.antlr.v4.runtime.*;
 import org.q2p0.jw4a.ast.AST_Builder;
+import org.q2p0.jw4a.parserOptions.CLParameters;
 import org.q2p0.jw4a.parser.ParserErrorListener;
 import org.q2p0.jw4a.parser.jw4aLexer;
 import org.q2p0.jw4a.parser.jw4aParser;
@@ -55,12 +56,5 @@ public class Jw4a {
         System.out.println( "Parser ends successfully");
     }
 
-    /**
-     * Get the name of the compiled jar file.
-     */
-    static String getProgName() {
-        return new java.io.File(Jw4a.class.getProtectionDomain()
-                .getCodeSource().getLocation().getPath()).getName();
-    }
 
 }

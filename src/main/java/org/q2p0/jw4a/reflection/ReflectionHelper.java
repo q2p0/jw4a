@@ -1,6 +1,5 @@
 package org.q2p0.jw4a.reflection;
 
-import org.q2p0.jw4a.CLParameters;
 import org.q2p0.jw4a.ExitErrorCodes;
 
 import java.io.File;

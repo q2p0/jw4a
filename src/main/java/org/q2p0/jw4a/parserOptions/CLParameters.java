@@ -1,11 +1,14 @@
-package org.q2p0.jw4a;
+package org.q2p0.jw4a.parserOptions;
 
 import org.apache.commons.cli.*;
+import org.q2p0.jw4a.ExitErrorCodes;
 
 import java.io.File;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.q2p0.jw4a.util.Application.getProgName;
 
 // COMMAND LINE ARGUMENTS PARSER
 // Responsibilities:
@@ -19,25 +22,25 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
 
     private static final String DEFINITION_FILE_KEY = "df";
     private static final String DEFINITION_FILE_DEFAULT = "Jw4aLists.txt";
-    String definitionFile;
+    public String definitionFile;
 
     private static final String ANDROID_HOME_KEY = "ah";
-    String androidHome;
+    public String androidHome;
 
     @Deprecated
     private static final String API_LEVEL_KEY = "al";
     @Deprecated
-    int minApi, maxApi;
+    public int minApi, maxApi;
 
     private static final String OUTPUT_DIRECTORY = "o";
     private static final String OUTPUT_DIRECTORY_DEFAULT = "jw4a_classes";
     String outputDirectory;
 
     // Command line args parse method
-    void parseArgs(String[] args ) {
+    public void parseArgs(String[] args ) {
 
         Option android_home_option = Option.builder(ANDROID_HOME_KEY).longOpt("android-home")
-                .desc("Path where the Android SDK is installed. If not specified, '" + Jw4a.getProgName() +
+                .desc("Path where the Android SDK is installed. If not specified, '" + getProgName() +
                       "' will try to obtain it from the environment ANDROID_HOME variable.")
                 .hasArg().required(false).build();
 
@@ -68,7 +71,7 @@ public class CLParameters { //TODO: Rename to CLArgumentsParser
             cmd = parser.parse( options, args);
         } catch (Exception e) {
             System.err.println("ERROR: Incorrect usage");
-            new HelpFormatter().printHelp( Jw4a.getProgName() + " [Options]", options );
+            new HelpFormatter().printHelp( getProgName() + " [Options]", options );
             System.exit(ExitErrorCodes.APACHE_CLI );
         }
 
