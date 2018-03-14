@@ -1,6 +1,6 @@
 package org.q2p0.jw4a.reflection;
 
-public interface ReflectionHelperOptions { //TODO: Rename to ReflectionHelperPaths
+public interface ReflectionPaths {
 
     String getAndroidHome();
     //TODO: ArrayList<String> getClassPaths();

@@ -2,13 +2,11 @@ package org.q2p0.jw4a.parserOptions;
 
 import org.apache.commons.cli.*;
 import org.q2p0.jw4a.ExitErrorCodes;
-import org.q2p0.jw4a.reflection.ReflectionHelperOptions;
-import org.q2p0.jw4a.reflection.ReflectionHelperOptionsProvider;
+import org.q2p0.jw4a.reflection.ReflectionPaths;
+import org.q2p0.jw4a.reflection.ReflectionPathsProvider;
 
 import java.io.File;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static org.q2p0.jw4a.util.Application.getProgName;
 
@@ -18,7 +16,7 @@ import static org.q2p0.jw4a.util.Application.getProgName;
 // - Parse and store the arguments values.
 // - Check the correction of the arguments and show an error in case of failure.
 
-public class CommandLineParameterParserOptions implements ReflectionHelperOptionsProvider { //TODO: Rename to CLArgumentsParser
+public class CommandLineParameterParserOptions implements ReflectionPathsProvider {
 
     //TODO: Add custom user java classes path parameters
 
@@ -28,11 +26,11 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
 
 
     private static final String ANDROID_HOME_KEY = "ah";
-    public String androidHome;
+    private String androidHome;
 
     private static final String OUTPUT_DIRECTORY = "o";
     private static final String OUTPUT_DIRECTORY_DEFAULT = "jw4a_classes";
-    String outputDirectory;
+    private String outputDirectory;
 
     // Command line args parse method
     public void parseArgs(String[] args ) {
@@ -117,8 +115,8 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
         }
     }
 
-    @Override public ReflectionHelperOptions getReflectionHelperOptions() {
-        return new ReflectionHelperOptions() {
+    @Override public ReflectionPaths getReflectionHelperOptions() {
+        return new ReflectionPaths() {
             @Override public String getAndroidHome() { return androidHome; }
         };
     }

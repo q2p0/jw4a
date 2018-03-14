@@ -13,9 +13,9 @@ public class ReflectionHelper {
 
     // COMMAND LINE ARGUMENTS
 
-    final String ANDROID_HOME;
-    final int    MINAPI_CL;
-    final int    MAXAPI_CL;
+    private final String ANDROID_HOME;
+    private final int    MINAPI_CL;
+    private final int    MAXAPI_CL;
 
     // ClassLoaders to search for definitions inside Android
 
@@ -25,7 +25,7 @@ public class ReflectionHelper {
     // CTOR
 
     //TODO: WARNING: User use jw4a for custom classes only
-    public ReflectionHelper( ReflectionHelperOptions params, int minApi, int maxApi ) {
+    public ReflectionHelper(ReflectionPaths params, int minApi, int maxApi ) {
 
         super();
 
