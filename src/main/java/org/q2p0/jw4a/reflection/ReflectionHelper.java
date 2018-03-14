@@ -25,13 +25,13 @@ public class ReflectionHelper {
     // CTOR
 
     //TODO: WARNING: User use jw4a for custom classes only
-    public ReflectionHelper( ReflectionHelperOptions params ) {
+    public ReflectionHelper( ReflectionHelperOptions params, int minApi, int maxApi ) {
 
         super();
 
         ANDROID_HOME = params.getAndroidHome();
-        MINAPI_CL   = params.getMinApi();
-        MAXAPI_CL   = params.getMaxApi();
+        MINAPI_CL   = minApi;
+        MAXAPI_CL   = maxApi;
 
         ANDROID_LOADERS = new URLClassLoader[ MAXAPI_CL - MINAPI_CL + 1 ];
 

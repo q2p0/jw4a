@@ -1,12 +1,13 @@
-grammar jw4a; //TODO: Change grammar to Jw4a
+grammar jw4a;
 
+//TODO: Change grammar to Jw4a
 //TODO WARNING: Test with Classes that don't belong to any package
-//TODO: Create one TODO.TXT file for big goals
+//TODO: Change Jw4aLists extension from txt to jw4a
 //TODO: Compile and check on WINDOWS SO
 
 @parser::header{
 
-    import org.q2p0.jw4a.reflection.ReflectionHelper;
+    import org.q2p0.jw4a.reflection.*;
     import org.q2p0.jw4a.ast.*;
     import org.q2p0.jw4a.ast.nodes.*;
     import org.q2p0.jw4a.ast.nodes.method.*;
@@ -23,48 +24,49 @@ grammar jw4a; //TODO: Change grammar to Jw4a
     ReflectionHelper reflectionHelper;
 }
 
-wrappers [AST_Builder astBuilder]:
-    {
-        this.astBuilder = astBuilder;
-    }
+wrappers [ ReflectionHelperOptions paths ]:
+    global_api[ paths ]
     package_description[ astBuilder.root ]*
     {
-        System.out.println();
         AST_TreePrint.print( astBuilder.root, 2 );
-
         codeGenerator.generate( astBuilder );
     }
 ;
 
-// package_description: dotted_string BRACKET_OPEN ( package_description | class_description )* BRACKET_CLOSE;
+global_api [ ReflectionHelperOptions paths ] : '@GLOBAL_API' closed_range SEMICOLON {
+    ReflectionHelper reflectionHelper = new ReflectionHelper( $paths, $closed_range.min, $closed_range.max );
+    astBuilder = new AST_Builder( reflectionHelper );
+};
+
+// package_description: dotted_string BRACE_OPEN ( package_description | class_description )* BRACE_CLOSE;
 package_description [AST_Package parentPackage]:
     dotted_string //TODO: root package
     {
         AST_Package _package = astBuilder.getOrAddPackage( parentPackage, $dotted_string.text );
     }
-    BRACKET_OPEN
+    BRACE_OPEN
     (
             package_description[ _package ]
         |
             class_description[ _package ]
     )*
-    BRACKET_CLOSE
+    BRACE_CLOSE
 ;
 
-// class_description: CLASS ID BRACKET_OPEN method* BRACKET_CLOSE;
+// class_description: CLASS ID BRACE_OPEN method* BRACE_CLOSE;
 class_description [AST_Package _package] :
     CLASS ID
     {
         AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text );
     }
-    BRACKET_OPEN
+    BRACE_OPEN
     {
         ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
     (
         method[ ast_class ]
     )*
-    BRACKET_CLOSE
+    BRACE_CLOSE
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
@@ -150,6 +152,28 @@ parameter returns [AST_AbstractParameter value]: //
 
 dotted_string : ID (DOT ID)* ;
 
+//TODO: UNDEFINED MIN RANGE
+//TODO: UNDEFINED MAX RANGE
+closed_range returns [int min, int max] :
+BRACKET_OPEN
+(
+    INTEGER
+    { $min = $max = Integer.parseInt($INTEGER.text); }
+|
+    imin=INTEGER { $min = Integer.parseInt($imin.text); }
+    '-'
+    imax=INTEGER { $max = Integer.parseInt($imax.text); }
+    {
+        if( $min > $max ) {
+            //TODO: THROW EXCEPTION
+        }
+    }
+)
+BRACKET_CLOSE
+;
+
+INTEGER : [0-9]+;
+
 CLASS : 'class';
 
 PRIMITIVE_TYPE : 'byte' | 'short' | 'int' | 'long' | 'float' | 'double' | 'char' | 'boolean';
@@ -157,8 +181,10 @@ VOID: 'void';
 
 COMMA: ',';
 DOT: '.';
-BRACKET_OPEN: '{';
-BRACKET_CLOSE: '}';
+BRACE_OPEN: '{';
+BRACE_CLOSE: '}';
+BRACKET_OPEN: '[';
+BRACKET_CLOSE: ']';
 SEMICOLON: ';';
 PARENTHESIS_OPEN: '(';
 PARENTHESIS_CLOSE: ')';
