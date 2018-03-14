@@ -30,10 +30,6 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
     private static final String ANDROID_HOME_KEY = "ah";
     public String androidHome;
 
-    //TODO: Refactor to JW4A global expression.
-    @Deprecated private static final String API_LEVEL_KEY = "al";
-    @Deprecated public int minApi, maxApi;
-
     private static final String OUTPUT_DIRECTORY = "o";
     private static final String OUTPUT_DIRECTORY_DEFAULT = "jw4a_classes";
     String outputDirectory;
@@ -51,11 +47,6 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
                       "If not defined '" + DEFINITION_FILE_DEFAULT + "' will be used.")
                 .hasArg().required(false).build();
 
-        Option api_level = Option.builder(API_LEVEL_KEY).longOpt("api-levels")
-                .desc("Range of API levels that will be used to build the JNI Java Helpers. Can be a concrete API "
-                +"'-"+API_LEVEL_KEY+" 21' or a range '-"+API_LEVEL_KEY+" 21-26'.")
-                .hasArg().required(true).build(); //TODO: Make it not required when user can search definition only for his custom classes
-
         Option output = Option.builder(OUTPUT_DIRECTORY).longOpt("output")
                 .desc("Path to the directory where the jw4a will be created. " +
                 "If not defined, '" + OUTPUT_DIRECTORY_DEFAULT + "' " + "will be used.")
@@ -64,7 +55,6 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
         Options options = new Options()
                 .addOption( android_home_option )
                 .addOption( definitions_file )
-                .addOption( api_level )
                 .addOption( output );
 
         CommandLine cmd = null;
@@ -88,62 +78,26 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
             System.exit(ExitErrorCodes.INCORRECT_JW4ALISTS );
         }
 
-        // ANDROID_HOME & API_LEVEL
+        // ANDROID_HOME
 
-        String apiLevel = cmd.getOptionValue(API_LEVEL_KEY);
-        if( apiLevel == null ) {
-            System.err.println("WARNING: Api levels don't specified. No classes will be searched on the Android system.");
-        } else {
-
-            androidHome = cmd.getOptionValue(ANDROID_HOME_KEY);
+        androidHome = cmd.getOptionValue(ANDROID_HOME_KEY);
+        if( androidHome == null ) {
+            Map<String, String> env = System.getenv();
+            for (String envName : env.keySet())
+                if( envName.equals("ANDROID_HOME") ) {
+                    androidHome = env.get(envName);
+                    break;
+                }
             if( androidHome == null ) {
-                Map<String, String> env = System.getenv();
-                for (String envName : env.keySet())
-                    if( envName.equals("ANDROID_HOME") ) {
-                        androidHome = env.get(envName);
-                        break;
-                    }
-                if( androidHome == null ) {
-                    System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified " +
-                                       "or ANDROID_HOME environment variable not defined.");
-                    System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
-                }
+                System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified " +
+                                   "or ANDROID_HOME environment variable not defined.");
+                System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
             }
-            if( androidHome.charAt( androidHome.length() - 1 ) == File.separatorChar )
-                androidHome = androidHome.substring( 0, androidHome.length() - 2 );
-            //TODO: Check that exist & is an directory
-
-            Pattern p = Pattern.compile("(\\d+)(-\\d+)?");
-            Matcher m = p.matcher(apiLevel);
-            if( m.matches() ) {
-
-                String minApiStr = m.group(1);
-                String maxApiStr = m.group(2);
-
-                try {
-                    minApi = Integer.parseInt(minApiStr);
-                    if (maxApiStr != null) {
-                        maxApiStr = maxApiStr.substring(1);
-                        maxApi = Integer.parseInt(maxApiStr);
-                    } else
-                        maxApi = minApi;
-                } catch (java.lang.NumberFormatException e) {
-                    System.err.println("ERROR: Incorrect API levels");
-                    e.printStackTrace();
-                    System.exit(ExitErrorCodes.APILEVELS_PARSEINT);
-                }
-
-                if( maxApi < minApi && maxApi != 0 ) {
-                    System.err.println("ERROR: Incorrect API levels. Correct range is 'a-b' where a<b");
-                    System.exit(ExitErrorCodes.APILEVELS_INVERTED_RANGE);
-                }
-
-            } else {
-                System.err.println("ERROR: Api levels must be a concrete value '21' or a range '21-26'");
-                System.exit(ExitErrorCodes.APILEVELS_REGEX_FAIL);
-            }
-
         }
+        if( androidHome.charAt( androidHome.length() - 1 ) == File.separatorChar )
+            androidHome = androidHome.substring( 0, androidHome.length() - 2 );
+        //TODO: Check that exist & is an directory
+
 
         // Output directory
 
@@ -166,8 +120,6 @@ public class CommandLineParameterParserOptions implements ReflectionHelperOption
     @Override public ReflectionHelperOptions getReflectionHelperOptions() {
         return new ReflectionHelperOptions() {
             @Override public String getAndroidHome() { return androidHome; }
-            @Override public int getMinApi() { return minApi; }
-            @Override public int getMaxApi() { return maxApi; }
         };
     }
 }

@@ -25,7 +25,7 @@ grammar jw4a;
 }
 
 wrappers [ ReflectionHelperOptions paths ]:
-    global_api[ paths ]
+    global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
     package_description[ astBuilder.root ]*
     {
         AST_TreePrint.print( astBuilder.root, 2 );
