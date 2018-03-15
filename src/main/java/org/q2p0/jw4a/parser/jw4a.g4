@@ -3,7 +3,7 @@ grammar jw4a;
 //TODO: Change grammar to Jw4a
 //TODO WARNING: Test with Classes that don't belong to any package
 //TODO: Change Jw4aLists extension from txt to jw4a
-//TODO: Compile and check on WINDOWS SO
+//TODO: Add custom user java classes path parameters
 
 @parser::header{
 
@@ -24,7 +24,7 @@ grammar jw4a;
     ReflectionHelper reflectionHelper;
 }
 
-wrappers [ ReflectionHelperOptions paths ]:
+wrappers [ ReflectionPaths paths ]:
     global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
     package_description[ astBuilder.root ]*
     {
@@ -33,7 +33,7 @@ wrappers [ ReflectionHelperOptions paths ]:
     }
 ;
 
-global_api [ ReflectionHelperOptions paths ] : '@GLOBAL_API' closed_range SEMICOLON {
+global_api [ ReflectionPaths paths ] : '@GLOBAL_API' closed_range SEMICOLON {
     ReflectionHelper reflectionHelper = new ReflectionHelper( $paths, $closed_range.min, $closed_range.max );
     astBuilder = new AST_Builder( reflectionHelper );
 };

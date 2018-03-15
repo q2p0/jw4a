@@ -42,6 +42,15 @@
         <scope>test</scope>
     </dependency>
 
+    <!-- http://stefanbirkner.github.io/system-rules/index.html -->
+    <!-- https://mvnrepository.com/artifact/com.github.stefanbirkner/system-rules -->
+    <dependency>
+        <groupId>com.github.stefanbirkner</groupId>
+        <artifactId>system-rules</artifactId>
+        <version>1.17.1</version>
+        <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

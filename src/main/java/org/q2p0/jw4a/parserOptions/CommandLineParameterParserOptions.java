@@ -4,8 +4,10 @@ import org.apache.commons.cli.*;
 import org.q2p0.jw4a.ExitErrorCodes;
 import org.q2p0.jw4a.reflection.ReflectionPaths;
 import org.q2p0.jw4a.reflection.ReflectionPathsProvider;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import static org.q2p0.jw4a.util.Application.getProgName;
@@ -17,8 +19,6 @@ import static org.q2p0.jw4a.util.Application.getProgName;
 // - Check the correction of the arguments and show an error in case of failure.
 
 public class CommandLineParameterParserOptions implements ReflectionPathsProvider {
-
-    //TODO: Add custom user java classes path parameters
 
     private static final String DEFINITION_FILE_KEY = "df";
     private static final String DEFINITION_FILE_DEFAULT = "Jw4aLists.txt";
@@ -118,6 +118,14 @@ public class CommandLineParameterParserOptions implements ReflectionPathsProvide
     @Override public ReflectionPaths getReflectionHelperOptions() {
         return new ReflectionPaths() {
             @Override public String getAndroidHome() { return androidHome; }
+            @Override
+            public List<String> getClassPaths() {
+                throw new NotImplementedException();
+            }
+            @Override
+            public List<String> getJarPaths() {
+                throw new NotImplementedException();
+            }
         };
     }
 }

@@ -24,10 +24,11 @@ public class ReflectionHelper {
 
     // CTOR
 
-    //TODO: WARNING: User use jw4a for custom classes only
     public ReflectionHelper(ReflectionPaths params, int minApi, int maxApi ) {
 
         super();
+
+        assert (minApi<=maxApi);
 
         ANDROID_HOME = params.getAndroidHome();
         MINAPI_CL   = minApi;
@@ -41,7 +42,7 @@ public class ReflectionHelper {
             String android_jar_path = ANDROID_HOME + "/platforms/android-" + i + "/android.jar";
             File jarFile = new File( android_jar_path );
             if(!jarFile.exists() || jarFile.isDirectory()) {
-                System.err.println("ERROR: Android.jar file for API" + i + "don't exist or is a directory.");
+                System.err.println("ERROR: Android.jar file for API " + i + " don't exist or is a directory.");
                 //TODO: Show command line call to install this lost android.jar file
                 System.exit(ExitErrorCodes.ANDROID_JAR_NOT_FOUND );
             }
