@@ -1,11 +1,13 @@
 grammar jw4a;
 
-//TODO: Change grammar to Jw4a
+//TODO: Change grammar name to Jw4a
 //TODO WARNING: Test with Classes that don't belong to any package
 //TODO: Change Jw4aLists extension from txt to jw4a
 //TODO: Add custom user java classes path parameters
 
 @parser::header{
+
+    import java.util.ResourceBundle;
 
     import org.q2p0.jw4a.reflection.*;
     import org.q2p0.jw4a.ast.*;
@@ -19,9 +21,9 @@ grammar jw4a;
 }
 
 @parser::members{
+    ResourceBundle resources = ResourceBundle.getBundle("org.q2p0.jw4a.parser.Jw4a");
     AST_Builder astBuilder;
-    CodeGenerator codeGenerator = new WrapperCodeGenerator();
-    ReflectionHelper reflectionHelper;
+    CodeGenerator codeGenerator = new WrapperCodeGenerator(); //TODO: Out of parser, after AST transformations.
 }
 
 wrappers [ ReflectionPaths paths ]:
@@ -165,7 +167,7 @@ BRACKET_OPEN
     imax=INTEGER { $max = Integer.parseInt($imax.text); }
     {
         if( $min > $max ) {
-            //TODO: THROW EXCEPTION
+            throw new Jw4aParseException( resources.getString("range_error"), $BRACKET_OPEN );
         }
     }
 )
