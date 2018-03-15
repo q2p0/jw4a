@@ -1,6 +1,5 @@
-grammar jw4a;
+grammar Jw4a;
 
-//TODO: Change grammar name to Jw4a
 //TODO WARNING: Test with Classes that don't belong to any package
 //TODO: Change Jw4aLists extension from txt to jw4a
 //TODO: Add custom user java classes path parameters
