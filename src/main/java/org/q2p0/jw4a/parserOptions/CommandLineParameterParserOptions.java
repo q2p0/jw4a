@@ -111,7 +111,7 @@ public class CommandLineParameterParserOptions implements ReflectionPathsProvide
         }
     }
 
-    @Override public ReflectionPaths getReflectionHelperOptions() {
+    @Override public ReflectionPaths getReflectionPaths() {
         return new ReflectionPaths() {
             @Override public String getAndroidHome() { return androidHome; }
             @Override
