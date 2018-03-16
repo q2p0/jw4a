@@ -26,6 +26,13 @@ public class ReflectionHelper {
 
     // CTOR
 
+    /* TODO: This call needs an ANDROID HOME
+        if( androidHome == null ) {
+            System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified " +
+                               "or ANDROID_HOME environment variable not defined.");
+            System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
+        }
+     */
     public ReflectionHelper(ReflectionPaths params, int minApi, int maxApi ) {
 
         super();

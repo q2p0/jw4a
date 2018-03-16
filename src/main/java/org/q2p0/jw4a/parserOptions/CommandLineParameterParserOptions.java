@@ -86,16 +86,12 @@ public class CommandLineParameterParserOptions implements ReflectionPathsProvide
                     androidHome = env.get(envName);
                     break;
                 }
-            if( androidHome == null ) {
-                System.err.println("ERROR: Api levels specified but ANDROID_HOME not specified " +
-                                   "or ANDROID_HOME environment variable not defined.");
-                System.exit( ExitErrorCodes.APILEVELS_WITHOUT_ANDROID_HOME );
-            }
         }
-        if( androidHome.charAt( androidHome.length() - 1 ) == File.separatorChar )
-            androidHome = androidHome.substring( 0, androidHome.length() - 2 );
-        //TODO: Check that exist & is an directory
-
+        if( androidHome != null ) {
+            if( androidHome.charAt( androidHome.length() - 1 ) == File.separatorChar )
+                androidHome = androidHome.substring( 0, androidHome.length() - 2 );
+            //TODO: Check that exist & is an directory
+        }
 
         // Output directory
 
