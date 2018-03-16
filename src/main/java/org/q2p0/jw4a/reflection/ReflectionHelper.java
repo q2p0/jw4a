@@ -9,6 +9,8 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.q2p0.jw4a.util.ResourceBundle.getBundle4Class;
+
 public class ReflectionHelper {
 
     // COMMAND LINE ARGUMENTS
@@ -42,7 +44,9 @@ public class ReflectionHelper {
             String android_jar_path = ANDROID_HOME + "/platforms/android-" + i + "/android.jar";
             File jarFile = new File( android_jar_path );
             if(!jarFile.exists() || jarFile.isDirectory()) {
-                System.err.println("ERROR: Android.jar file for API " + i + " don't exist or is a directory.");
+                System.err.println(
+                    String.format( getBundle4Class(ReflectionHelper.class).getString("missed_android_jar"), i)
+                );
                 //TODO: Show command line call to install this lost android.jar file
                 System.exit(ExitErrorCodes.ANDROID_JAR_NOT_FOUND );
             }
@@ -99,37 +103,3 @@ public class ReflectionHelper {
     }
 
 }
-
-        /*
-            TODO: Old command line minmaxapi parsing
-
-            Pattern p = Pattern.compile("(\\d+)(-\\d+)?");
-            Matcher m = p.matcher(apiLevel);
-            if( m.matches() ) {
-
-                String minApiStr = m.group(1);
-                String maxApiStr = m.group(2);
-
-                try {
-                    minApi = Integer.parseInt(minApiStr);
-                    if (maxApiStr != null) {
-                        maxApiStr = maxApiStr.substring(1);
-                        maxApi = Integer.parseInt(maxApiStr);
-                    } else
-                        maxApi = minApi;
-                } catch (java.lang.NumberFormatException e) {
-                    System.err.println("ERROR: Incorrect API levels");
-                    e.printStackTrace();
-                    System.exit(ExitErrorCodes.APILEVELS_PARSEINT);
-                }
-
-                if( maxApi < minApi && maxApi != 0 ) {
-                    System.err.println("ERROR: Incorrect API levels. Correct range is 'a-b' where a<b");
-                    System.exit(ExitErrorCodes.APILEVELS_INVERTED_RANGE);
-                }
-
-            } else {
-                System.err.println("ERROR: Api levels must be a concrete value '21' or a range '21-26'");
-                System.exit(ExitErrorCodes.APILEVELS_REGEX_FAIL);
-            }
-        */

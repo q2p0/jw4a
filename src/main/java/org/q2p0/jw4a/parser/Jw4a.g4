@@ -22,7 +22,7 @@ grammar Jw4a;
 }
 
 @parser::members{
-    ResourceBundle resources = getBundle4Class( this.getClass() );
+    static ResourceBundle resources = getBundle4Class( this.getClass() );
     AST_Builder astBuilder;
     CodeGenerator codeGenerator = new WrapperCodeGenerator(); //TODO: Out of parser, after AST transformations.
 }
