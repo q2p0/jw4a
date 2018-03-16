@@ -17,10 +17,12 @@ grammar Jw4a;
 
     import org.q2p0.jw4a.generator.*;
 
+    import static org.q2p0.jw4a.util.ResourceBundle.getBundle4Class;
+
 }
 
 @parser::members{
-    ResourceBundle resources = ResourceBundle.getBundle("org.q2p0.jw4a.parser.Jw4a");
+    ResourceBundle resources = getBundle4Class( this.getClass() );
     AST_Builder astBuilder;
     CodeGenerator codeGenerator = new WrapperCodeGenerator(); //TODO: Out of parser, after AST transformations.
 }
