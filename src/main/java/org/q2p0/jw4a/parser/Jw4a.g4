@@ -22,17 +22,15 @@ grammar Jw4a;
 }
 
 @parser::members{
-    static ResourceBundle resources = getBundle4Class( this.getClass() );
+    static ResourceBundle resources = getBundle4Class( Jw4aParser.class );
     AST_Builder astBuilder;
-    CodeGenerator codeGenerator = new WrapperCodeGenerator(); //TODO: Out of parser, after AST transformations.
 }
 
-wrappers [ ReflectionPaths paths ]:
+wrappers [ ReflectionPaths paths ] returns [ AST_Package root ]:
     global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
-    package_description[ astBuilder.root ]*
+    package_description[ astBuilder.getRoot() ]*
     {
-        AST_TreePrint.print( astBuilder.root, 2 );
-        codeGenerator.generate( astBuilder );
+        $root = astBuilder.getRoot();
     }
 ;
 

@@ -14,11 +14,13 @@ import java.util.Map;
 
 public class AST_Builder {
 
-    final private ReflectionHelper reflectionHelper;
-    public AST_Package root = new AST_Package(null, null);
     public AST_Builder(ReflectionHelper reflectionHelper) {
         this.reflectionHelper = reflectionHelper;
     }
+
+    final private ReflectionHelper reflectionHelper;
+    final private AST_Package root = new AST_Package(null, null);
+    public AST_Package getRoot() { return root; }
 
     public SetGet< AST_Class > astClassCache = new HashMapSetGet<>();
     public AST_Class getOrAddClass( String fullClassPath ) {
