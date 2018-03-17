@@ -57,8 +57,7 @@ public class AST_Method {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AST_Method method = (AST_Method) o;
-        return Objects.equals(id, method.id) &&
-                Objects.equals(parameters, method.parameters);
+        return Objects.equals(id, method.id) && Objects.equals(parameters, method.parameters);
     }
 
     @Override

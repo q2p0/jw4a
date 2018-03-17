@@ -1,12 +1,13 @@
 package org.q2p0.jw4a.ast.nodes;
 
+import org.q2p0.jw4a.ast.AST_TreeComparableNode;
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
 import static org.q2p0.jw4a.util.CollectionUtil.toRangeString;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class AST_Class {
+public class AST_Class implements AST_TreeComparableNode {
 
     // Constructor & public fields.
 
@@ -27,13 +28,23 @@ public class AST_Class {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AST_Class ast_class = (AST_Class) o;
-        return Objects.equals(id, ast_class.id) &&
-                Objects.equals(ast_package, ast_class.ast_package);
+        return Objects.equals(id, ast_class.id) && Objects.equals(ast_package, ast_class.ast_package);
     }
 
     @Override public int hashCode() {
         return Objects.hash(id, ast_package);
-    } //TODO: Maybe reduce hash to ast_package field
+    }
+
+    // TreeEquals
+
+    @Override public boolean treeEquals(AST_TreeComparableNode node) {
+        if( !equals(node) ) return false;
+        AST_Class c = (AST_Class) node;
+        if( !apiReflectionClasses.equals( c.apiReflectionClasses )) return false;
+        if( !methods.equals( c.methods )) return false;
+        if( !superClass.equals( c.superClass )) return false;
+        return true;
+    }
 
     // One line descriptive string 4 development & AST_TreePrint.
     @Override public String toString() {
@@ -67,5 +78,4 @@ public class AST_Class {
         }
 
         return builder.toString();
-    }
-}
+    }}
