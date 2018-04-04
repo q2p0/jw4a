@@ -132,4 +132,5 @@ public class ParserTest {
         assertTrue(ast1 != null ); //TODO: Better test with tree
     }
 
+    //TODO: Test 4 error: duplicated branch params
 }
