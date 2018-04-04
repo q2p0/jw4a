@@ -1,5 +1,5 @@
 @echo off
-SETLOCAL parent=%~dp0
+SET parent=%~dp0
 CLS
 
 CD platforms

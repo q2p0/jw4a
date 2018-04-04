@@ -7,6 +7,7 @@ public class ExitErrorCodes {
 
     public static final int PARSER_ERROR = 100;
     public static final int PARSER_ERROR_METHOD_NOT_FOUND = 101;
+    public static final int PARSER_ERROR_CLASS_NOT_FOUND = 102;
 }
 
 ////Deprecated exit codes
