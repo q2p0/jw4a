@@ -30,8 +30,8 @@ grammar Jw4a;
 wrappers [ ReflectionPaths paths ] returns [ AST_Package root ]:
     global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
     {
-        List<BP_Interface> globalParams = new ArrayList<BP_Interface>();
-        globalParams.add( $global_api.bt_range );
+        BP_BranchParams globalParams = new BP_BranchParams();
+        globalParams.apiRange = $global_api.bt_range;
     }
     package_description[ astBuilder.getRoot(), globalParams ]*
     {
@@ -46,7 +46,7 @@ global_api [ ReflectionPaths paths ] returns [ BP_ApiRange bt_range ] : '@GLOBAL
 };
 
 // package_description: dotted_string BRACE_OPEN ( package_description | class_description )* BRACE_CLOSE;
-package_description [AST_Package parentPackage, List<BP_Interface> branchParams]:
+package_description [AST_Package parentPackage, BP_BranchParams branchParams]:
     dotted_string //TODO: root package
     {
         AST_Package _package = astBuilder.getOrAddPackage( parentPackage, $dotted_string.text );
@@ -61,7 +61,7 @@ package_description [AST_Package parentPackage, List<BP_Interface> branchParams]
 ;
 
 // class_description: CLASS ID BRACE_OPEN method* BRACE_CLOSE;
-class_description [AST_Package _package, List<BP_Interface> branchParams] :
+class_description [AST_Package _package, BP_BranchParams branchParams] :
     CLASS ID
     {
         AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text );
@@ -77,7 +77,7 @@ class_description [AST_Package _package, List<BP_Interface> branchParams] :
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
-method [AST_Class classOwner, List<BP_Interface> branchParams] :
+method [AST_Class classOwner, BP_BranchParams branchParams] :
     {
         AST_AbstractMethodReturn returnDesc = null;
     }

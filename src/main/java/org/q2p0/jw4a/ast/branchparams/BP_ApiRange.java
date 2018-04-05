@@ -1,6 +1,6 @@
 package org.q2p0.jw4a.ast.branchparams;
 
-public class BP_ApiRange implements BP_Interface {
+public class BP_ApiRange {
     public BP_ApiRange(int minApi, int maxApi) {
         assert ( minApi <= maxApi );
         this.minApi = minApi;
