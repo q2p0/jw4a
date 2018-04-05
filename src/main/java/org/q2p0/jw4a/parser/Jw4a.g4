@@ -10,6 +10,7 @@ grammar Jw4a;
 
     import org.q2p0.jw4a.reflection.*;
     import org.q2p0.jw4a.ast.*;
+    import org.q2p0.jw4a.ast.branchparams.*;
     import org.q2p0.jw4a.ast.nodes.*;
     import org.q2p0.jw4a.ast.nodes.method.*;
     import org.q2p0.jw4a.ast.nodes.method.parameter.*;
@@ -28,7 +29,7 @@ grammar Jw4a;
 
 wrappers [ ReflectionPaths paths ] returns [ AST_Package root ]:
     global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
-    package_description[ astBuilder.getRoot() ]*
+    package_description[ astBuilder.getRoot(), null ]*
     {
         $root = astBuilder.getRoot();
     }
@@ -40,22 +41,22 @@ global_api [ ReflectionPaths paths ] : '@GLOBAL_API' closed_range SEMICOLON {
 };
 
 // package_description: dotted_string BRACE_OPEN ( package_description | class_description )* BRACE_CLOSE;
-package_description [AST_Package parentPackage]:
+package_description [AST_Package parentPackage, List<BP_Interface> branchParams]:
     dotted_string //TODO: root package
     {
         AST_Package _package = astBuilder.getOrAddPackage( parentPackage, $dotted_string.text );
     }
     BRACE_OPEN
     (
-            package_description[ _package ]
+            package_description[ _package, null ]
         |
-            class_description[ _package ]
+            class_description[ _package, null ]
     )*
     BRACE_CLOSE
 ;
 
 // class_description: CLASS ID BRACE_OPEN method* BRACE_CLOSE;
-class_description [AST_Package _package] :
+class_description [AST_Package _package, List<BP_Interface> branchParams] :
     CLASS ID
     {
         AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text );
@@ -65,13 +66,13 @@ class_description [AST_Package _package] :
         ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
     (
-        method[ ast_class ]
+        method[ ast_class, null ]
     )*
     BRACE_CLOSE
 ;
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
-method [AST_Class classOwner] :
+method [AST_Class classOwner, List<BP_Interface> branchParams] :
     {
         AST_AbstractMethodReturn returnDesc = null;
     }
