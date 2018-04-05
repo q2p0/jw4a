@@ -1,5 +1,6 @@
 package org.q2p0.jw4a.ast;
 
+import org.q2p0.jw4a.ast.branchparams.BP_ApiRange;
 import org.q2p0.jw4a.reflection.ReflectionHelper;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
@@ -23,7 +24,7 @@ public class AST_Builder {
     public AST_Package getRoot() { return root; }
 
     public SetGet< AST_Class > astClassCache = new HashMapSetGet<>();
-    public AST_Class getOrAddClass( String fullClassPath ) {
+    public AST_Class getOrAddClass( String fullClassPath, BP_ApiRange apiRange ) {
 
         String packagePath = DottedString.init( fullClassPath );
         String classID = DottedString.last( fullClassPath );
@@ -32,9 +33,9 @@ public class AST_Builder {
         if( packagePath != null )
             ownerPackage = getOrAddPackage( packagePath );
 
-        return getOrAddClass( ownerPackage, classID );
+        return getOrAddClass( ownerPackage, classID, apiRange );
     }
-    public AST_Class getOrAddClass(AST_Package _package, String classID ) {
+    public AST_Class getOrAddClass(AST_Package _package, String classID, BP_ApiRange apiRange ) {
 
         // If AST_Class was not previously stored.
         AST_Class key = new AST_Class(_package, classID);
@@ -48,7 +49,7 @@ public class AST_Builder {
 
             // Find reflection references between minApi and maxApi
             String fullClassPath = String.join(".", _package.packagePath, classID);
-            Map<Integer, Class> references = reflectionHelper.getClasses( fullClassPath );
+            Map<Integer, Class> references = reflectionHelper.getClasses( fullClassPath, apiRange.minApi, apiRange.maxApi );
             if( references == null )
                 throw new RuntimeException("Unimplemented situation, no API references"); //TODO: Show at least one descriptive message
             value.apiReflectionClasses = references;
@@ -57,7 +58,7 @@ public class AST_Builder {
             Map<Integer, Class> superClasses = reflectionHelper.getSuperClasses( references );
             for (Map.Entry<Integer, Class> superClass : superClasses.entrySet()) {
                 String superClassPath = superClass.getValue().getName();
-                AST_Class astSuperClass = getOrAddClass( superClassPath );
+                AST_Class astSuperClass = getOrAddClass( superClassPath, apiRange );
                 value.superClass.put(superClass.getKey(), astSuperClass);
             }
 

@@ -89,10 +89,6 @@ public class ReflectionHelper {
         return returnedHash;
     }
 
-    public Map< Integer, Class > getClasses(String name ) {
-        return getClasses(name, MINAPI_CL, MAXAPI_CL);
-    }
-
     public Map<Integer, Class> getSuperClasses(Map <Integer, Class> inheritClasses){
 
         Map<Integer, Class> superClasses = new HashMap<>( inheritClasses.size() );

@@ -64,7 +64,7 @@ package_description [AST_Package parentPackage, BP_BranchParams branchParams]:
 class_description [AST_Package _package, BP_BranchParams branchParams] :
     CLASS ID
     {
-        AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text );
+        AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text, $branchParams.apiRange );
     }
     BRACE_OPEN
     {
@@ -84,7 +84,7 @@ method [AST_Class classOwner, BP_BranchParams branchParams] :
     (
         dotted_string
             {
-                AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text );
+                AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text,  $branchParams.apiRange );
                 returnDesc = new AST_ClassMethodReturn( parameterClass );
             }
         |
@@ -107,7 +107,7 @@ method [AST_Class classOwner, BP_BranchParams branchParams] :
         List<AST_AbstractParameter> parameters = null;
     }
     (
-        parameters
+        parameters[ $branchParams ]
             {
                 parameters = $parameters.value;
             }
@@ -120,17 +120,17 @@ method [AST_Class classOwner, BP_BranchParams branchParams] :
 ;
 
 // parameters: parameter ( COMMA parameter )*
-parameters returns [List<AST_AbstractParameter> value]:
+parameters [ BP_BranchParams branchParams ] returns [List<AST_AbstractParameter> value]:
     {
         $value = new ArrayList<AST_AbstractParameter>();
     }
-    p1=parameter
+    p1=parameter[ $branchParams ]
     {
         $value.add( $p1.value );
     }
     (
         COMMA
-        p2=parameter
+        p2=parameter[ $branchParams ]
         {
             $value.add( $p2.value );
         }
@@ -138,11 +138,11 @@ parameters returns [List<AST_AbstractParameter> value]:
 ;
 
 // parameter : ( dotted_string | PRIMITIVE_TYPE ) ID ;
-parameter returns [AST_AbstractParameter value]: //
+parameter [ BP_BranchParams branchParams ] returns [AST_AbstractParameter value]: //
     (
         dotted_string
         {
-            AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text );
+            AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text, $branchParams.apiRange );
             $value = new AST_ClassParameter( parameterClass );
         }
     |
