@@ -53,9 +53,9 @@ package_description [AST_Package parentPackage, List<BP_Interface> branchParams]
     }
     BRACE_OPEN
     (
-            package_description[ _package, null ]
+            package_description[ _package, $branchParams ]
         |
-            class_description[ _package, null ]
+            class_description[ _package, $branchParams ]
     )*
     BRACE_CLOSE
 ;
@@ -71,7 +71,7 @@ class_description [AST_Package _package, List<BP_Interface> branchParams] :
         ArrayList<AST_Method> methods = new ArrayList<AST_Method>();
     }
     (
-        method[ ast_class, null ]
+        method[ ast_class, $branchParams ]
     )*
     BRACE_CLOSE
 ;
