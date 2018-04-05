@@ -29,15 +29,20 @@ grammar Jw4a;
 
 wrappers [ ReflectionPaths paths ] returns [ AST_Package root ]:
     global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
-    package_description[ astBuilder.getRoot(), null ]*
+    {
+        List<BP_Interface> globalParams = new ArrayList<BP_Interface>();
+        globalParams.add( $global_api.bt_range );
+    }
+    package_description[ astBuilder.getRoot(), globalParams ]*
     {
         $root = astBuilder.getRoot();
     }
 ;
 
-global_api [ ReflectionPaths paths ] : '@GLOBAL_API' closed_range SEMICOLON {
+global_api [ ReflectionPaths paths ] returns [ BP_ApiRange bt_range ] : '@GLOBAL_API' closed_range SEMICOLON {
     ReflectionHelper reflectionHelper = new ReflectionHelper( $paths, $closed_range.min, $closed_range.max );
     astBuilder = new AST_Builder( reflectionHelper );
+    $bt_range = new BP_ApiRange( $closed_range.min, $closed_range.max );
 };
 
 // package_description: dotted_string BRACE_OPEN ( package_description | class_description )* BRACE_CLOSE;
