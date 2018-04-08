@@ -25,8 +25,6 @@ public class Jw4aParseException extends ParseCancellationException {
         this(message, token.getLine(), token.getCharPositionInLine());
     }
 
-    //TODO: If needed Ctor for RuleContext
-
     @Override public String getMessage() {
         return detailMessage;
     }

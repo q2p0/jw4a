@@ -28,6 +28,7 @@ grammar Jw4a;
 }
 
 wrappers [ ReflectionPaths paths ] returns [ AST_Package root ]:
+    //TODO: When more global directives where added : https://stackoverflow.com/questions/45221716/specifying-a-grammar-rule-of-appearing-in-any-order-but-only-at-most-once
     global_api[ paths ] //TODO: Optional only if ANDROID_HOME has been defined.
     {
         BP_BranchParams globalParams = new BP_BranchParams();
@@ -47,6 +48,10 @@ global_api [ ReflectionPaths paths ] returns [ BP_ApiRange bt_range ] : '@GLOBAL
 
 // package_description: dotted_string BRACE_OPEN ( package_description | class_description )* BRACE_CLOSE;
 package_description [AST_Package parentPackage, BP_BranchParams branchParams]:
+    //TODO: package branch options
+    (
+        api[branchParams.apiRange] { $branchParams.apiRange = $api.apiRange; }
+    )?
     dotted_string //TODO: root package
     {
         AST_Package _package = astBuilder.getOrAddPackage( parentPackage, $dotted_string.text );
@@ -62,6 +67,10 @@ package_description [AST_Package parentPackage, BP_BranchParams branchParams]:
 
 // class_description: CLASS ID BRACE_OPEN method* BRACE_CLOSE;
 class_description [AST_Package _package, BP_BranchParams branchParams] :
+    //TODO: class branch options
+    (
+        api[branchParams.apiRange] { $branchParams.apiRange = $api.apiRange; }
+    )?
     CLASS ID
     {
         AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text, $branchParams.apiRange );
@@ -78,6 +87,10 @@ class_description [AST_Package _package, BP_BranchParams branchParams] :
 
 // method: ( dotted_string | PRIMITIVE_TYPE | VOID ) ID PARENTHESIS_OPEN parameter* PARENTHESIS_CLOSE SEMICOLON;
 method [AST_Class classOwner, BP_BranchParams branchParams] :
+    //TODO: method branch options
+    (
+        api[branchParams.apiRange] { $branchParams.apiRange = $api.apiRange; }
+    )?
     {
         AST_AbstractMethodReturn returnDesc = null;
     }
@@ -159,6 +172,17 @@ parameter [ BP_BranchParams branchParams ] returns [AST_AbstractParameter value]
 
 dotted_string : ID (DOT ID)* ;
 
+api [ BP_ApiRange parentRange ] returns [ BP_ApiRange apiRange ] :
+API_MODIFIER range
+{
+    try {
+        $apiRange = new BP_ApiRange( parentRange, $range.min, $range.max );
+    } catch ( RuntimeException e ) {
+        throw new Jw4aParseException( resources.getString("parent_range_error"), $API_MODIFIER );
+    }
+}
+;
+
 range returns [int min, int max] :
 (
     closed_range
@@ -203,6 +227,8 @@ BRACKET_OPEN
 )
 BRACKET_CLOSE
 ;
+
+API_MODIFIER : '@API';
 
 INTEGER : [0-9]+;
 
