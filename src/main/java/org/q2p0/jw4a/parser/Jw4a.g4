@@ -159,8 +159,33 @@ parameter [ BP_BranchParams branchParams ] returns [AST_AbstractParameter value]
 
 dotted_string : ID (DOT ID)* ;
 
-//TODO: UNDEFINED MIN RANGE
-//TODO: UNDEFINED MAX RANGE
+range returns [int min, int max] :
+(
+    closed_range
+    {
+        $min = $closed_range.min;
+        $max = $closed_range.max;
+    }
+|
+    BRACKET_OPEN
+    (
+        INTEGER '-'
+        {
+            $min = Integer.parseInt($INTEGER.text);
+            $max = Integer.MAX_VALUE;
+        }
+    |
+        '-' INTEGER
+        {
+            $min = Integer.MIN_VALUE;
+            $max = Integer.parseInt($INTEGER.text);
+        }
+    )
+    BRACKET_CLOSE
+)
+;
+
+
 closed_range returns [int min, int max] :
 BRACKET_OPEN
 (
