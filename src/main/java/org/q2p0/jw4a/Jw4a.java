@@ -23,9 +23,15 @@ public class Jw4a { //TODO: Rename to Jw4aMain
             return; //TODO: Add an error exit code
         }
 
-        AST_Package root = new Jw4aParserCaller( inputCharStream, clparser.getReflectionPaths() ).parse();
+        AST_Package ast_root = null;
+        try {
+            ast_root =  new Jw4aParserCaller( inputCharStream, clparser.getReflectionPaths() ).parse();
+        }catch (Exception e){
+            System.err.println( e.getMessage() );
+            System.exit(ExitErrorCodes.PARSER_ERROR);
+        }
 
-        AST_TreePrint.print( root, 2 );
+        AST_TreePrint.print( ast_root, 2 );
 
         //TODO: Get the AST and call CodeGenerator
         System.out.println( );

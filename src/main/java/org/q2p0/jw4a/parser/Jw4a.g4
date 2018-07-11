@@ -73,7 +73,12 @@ class_description [AST_Package _package, BP_BranchParams branchParams] :
     )?
     CLASS ID
     {
-        AST_Class ast_class = astBuilder.getOrAddClass( $_package, $ID.text, $branchParams.apiRange );
+        AST_Class ast_class = null;
+        try {
+            ast_class = astBuilder.getOrAddClass( $_package, $ID.text, $branchParams.apiRange );
+        } catch ( ReflectionHelperException rhe ) {
+            throw new Jw4aParseException( rhe, $ID);
+        }
     }
     BRACE_OPEN
     {
@@ -97,7 +102,13 @@ method [AST_Class classOwner, BP_BranchParams branchParams] :
     (
         dotted_string
             {
-                AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text,  $branchParams.apiRange );
+                AST_Class parameterClass = null;
+                try{
+                    parameterClass = astBuilder.getOrAddClass( $dotted_string.text,  $branchParams.apiRange );
+                } catch ( ReflectionHelperException rhe ) {
+                    throw new Jw4aParseException( rhe, ((MethodContext)_localctx).dotted_string );
+                }
+
                 returnDesc = new AST_ClassMethodReturn( parameterClass );
             }
         |
@@ -155,7 +166,14 @@ parameter [ BP_BranchParams branchParams ] returns [AST_AbstractParameter value]
     (
         dotted_string
         {
-            AST_Class parameterClass = astBuilder.getOrAddClass( $dotted_string.text, $branchParams.apiRange );
+            //TODO: Method to simplify the grammar
+            AST_Class parameterClass = null;
+            try{
+                parameterClass = astBuilder.getOrAddClass( $dotted_string.text, $branchParams.apiRange );
+            } catch ( ReflectionHelperException rhe ) {
+                throw new Jw4aParseException( rhe, ((ParameterContext)_localctx).dotted_string );
+            }
+
             $value = new AST_ClassParameter( parameterClass );
         }
     |

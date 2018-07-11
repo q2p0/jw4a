@@ -64,7 +64,7 @@ public class ReflectionHelper {
 
     }
 
-    public Map< Integer, Class > getClasses(String name, int minApi, int maxApi) {
+    public Map< Integer, Class > getClasses(String name, int minApi, int maxApi) throws ReflectionHelperException {
 
         Map< Integer, Class > returnedHash = new HashMap<>();
 
@@ -78,15 +78,14 @@ public class ReflectionHelper {
             if( _class != null ) {
                 returnedHash.put( api, _class );
             } else {
-                //TODO: Throw parseException to show the line:column instead System.Exit
-                System.err.println("WARNING: The class " + name + " has been not found on Android.jar API Level " + api + "."); //TODO: String from resource
-                System.err.println("WARNING: You must add an @API[a-b], @API[a], @API[a-] or @API[-b] modifier before the class token."); //TODO: String from resource
-                System.exit( ExitErrorCodes.PARSER_ERROR_CLASS_NOT_FOUND );
+                StringBuilder exceptionMessage = new StringBuilder();
+                exceptionMessage.append( "WARNING: The class " + name + " has been not found on Android.jar API Level " + api + "." ); //TODO: String from resource
+                exceptionMessage.append( "WARNING: You must add an @API[a-b], @API[a], @API[a-] or @API[-b] modifier before the class token." ); //TODO: String from resource
+                throw new ReflectionHelperException( exceptionMessage.toString() );
             }
         }
 
-        if( returnedHash.size() == 0 )
-            returnedHash = null;
+        assert ( returnedHash.size() > 0 );
 
         return returnedHash;
     }

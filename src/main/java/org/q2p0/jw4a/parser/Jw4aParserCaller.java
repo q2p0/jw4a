@@ -28,14 +28,7 @@ public class Jw4aParserCaller {
         parser.addErrorListener(new ParserErrorListener());
 
         // Parse the input & return the AST_Tree
-        AST_Package ast_root = null;
-        try {
-            ast_root =  parser.wrappers( this.paths ).root;
-        }catch (Exception e){
-            System.err.println( e.getMessage() );
-            System.exit(ExitErrorCodes.PARSER_ERROR);
-        }
-        return ast_root;
+        return parser.wrappers( this.paths ).root;
     }
 
 }

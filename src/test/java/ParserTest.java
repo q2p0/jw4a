@@ -1,18 +1,16 @@
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
-import org.junit.Rule;
+
 import org.junit.Test;
-import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+
 import static org.junit.Assert.assertTrue;
-import org.q2p0.jw4a.ExitErrorCodes;
+
 import org.q2p0.jw4a.ast.nodes.AST_Package;
+import org.q2p0.jw4a.parser.Jw4aParseException;
 import org.q2p0.jw4a.reflection.ReflectionPaths;
 import org.q2p0.jw4a.parser.Jw4aParserCaller;
 
 public class ParserTest {
-
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Test
     public void different_packagedef_sametree() {
@@ -52,10 +50,8 @@ public class ParserTest {
 
     }
 
-    @Test
+    @Test(expected = Jw4aParseException.class)
     public void method_exist_only_api_1_error() {
-
-        exit.expectSystemExitWithStatus( ExitErrorCodes.PARSER_ERROR_METHOD_NOT_FOUND );
 
         ReflectionPaths reflectionPaths = new ReflectionPathsStub( ReflectionPathsStub.FAKE_ANDROIDHOME_RESOURCES_PATH, null, null);
 
@@ -68,8 +64,7 @@ public class ParserTest {
             "}"
         );
 
-        AST_Package ast1 = new Jw4aParserCaller( jw4aLists_1, reflectionPaths).parse();
-
+        new Jw4aParserCaller( jw4aLists_1, reflectionPaths).parse();
     }
 
     @Test
@@ -94,10 +89,8 @@ public class ParserTest {
 
     }
 
-    @Test
+    @Test(expected = Jw4aParseException.class)
     public void class_not_found_lower_apis_error() {
-
-        exit.expectSystemExitWithStatus( ExitErrorCodes.PARSER_ERROR_CLASS_NOT_FOUND );
 
         ReflectionPaths reflectionPaths = new ReflectionPathsStub( ReflectionPathsStub.FAKE_ANDROIDHOME_RESOURCES_PATH, null, null);
 
@@ -110,7 +103,7 @@ public class ParserTest {
                 "}"
         );
 
-        AST_Package ast1 = new Jw4aParserCaller( jw4aLists, reflectionPaths).parse();
+        new Jw4aParserCaller(jw4aLists, reflectionPaths).parse();
     }
 
     @Test

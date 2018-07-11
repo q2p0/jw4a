@@ -5,6 +5,7 @@ import org.q2p0.jw4a.reflection.ReflectionHelper;
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
+import org.q2p0.jw4a.reflection.ReflectionHelperException;
 import org.q2p0.jw4a.util.DottedString;
 import org.q2p0.jw4a.util.HashMapSetGet;
 import org.q2p0.jw4a.util.SetGet;
@@ -24,7 +25,8 @@ public class AST_Builder {
     public AST_Package getRoot() { return root; }
 
     public SetGet< AST_Class > astClassCache = new HashMapSetGet<>();
-    public AST_Class getOrAddClass( String fullClassPath, BP_ApiRange apiRange ) {
+    //TODO: Change BP_ApiRange apiRange with BP_BranchParams and better BP_BranchParams
+    public AST_Class getOrAddClass( String fullClassPath, BP_ApiRange apiRange ) throws ReflectionHelperException {
 
         String packagePath = DottedString.init( fullClassPath );
         String classID = DottedString.last( fullClassPath );
@@ -35,7 +37,8 @@ public class AST_Builder {
 
         return getOrAddClass( ownerPackage, classID, apiRange );
     }
-    public AST_Class getOrAddClass(AST_Package _package, String classID, BP_ApiRange apiRange ) {
+    //TODO: Change BP_ApiRange apiRange with BP_BranchParams and better BP_BranchParams
+    public AST_Class getOrAddClass(AST_Package _package, String classID, BP_ApiRange apiRange ) throws ReflectionHelperException {
 
         // If AST_Class was not previously stored.
         AST_Class key = new AST_Class(_package, classID);
