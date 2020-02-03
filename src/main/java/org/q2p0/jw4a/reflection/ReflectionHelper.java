@@ -47,8 +47,8 @@ public class ReflectionHelper {
 
         // Check that the SDK has the needed android jars
         for(int i=MINAPI_CL; i<=MAXAPI_CL; i++ ) {
-
-            String android_jar_path = ANDROID_HOME + "/platforms/android-" + i + "/android.jar";
+            String sdk_platform_directory = File.separator + "platforms" + File.separator + "android-" + i + File.separator + "android.jar";
+            String android_jar_path = ANDROID_HOME + sdk_platform_directory;
             File jarFile = new File( android_jar_path );
             if(!jarFile.exists() || jarFile.isDirectory()) {
                 System.err.println(
