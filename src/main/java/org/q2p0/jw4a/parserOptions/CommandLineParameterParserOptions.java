@@ -30,7 +30,7 @@ public class CommandLineParameterParserOptions implements ReflectionPathsProvide
 
     private static final String OUTPUT_DIRECTORY = "o";
     private static final String OUTPUT_DIRECTORY_DEFAULT = "jw4a_classes";
-    private String outputDirectory;
+    public String outputDirectory;
 
     // Command line args parse method
     public void parseArgs(String[] args ) {
@@ -73,6 +73,7 @@ public class CommandLineParameterParserOptions implements ReflectionPathsProvide
         File f = new File(definitionFile);
         if(!f.exists() || f.isDirectory()) {
             System.err.println("ERROR: Definitions file don't exist or is a directory.");
+            System.err.println("Current path is " + System.getProperty("user.dir"));
             System.exit(ExitErrorCodes.INCORRECT_JW4ALISTS );
         }
 
@@ -99,7 +100,10 @@ public class CommandLineParameterParserOptions implements ReflectionPathsProvide
         if( outputDirectory == null )
             outputDirectory = OUTPUT_DIRECTORY_DEFAULT;
         File od = new File(outputDirectory);
-        if( od.exists() ) {
+        if( od.exists() )
+        {
+
+            //return;
             //TODO: Delete
             //TODO: Show deletion warning message
         }

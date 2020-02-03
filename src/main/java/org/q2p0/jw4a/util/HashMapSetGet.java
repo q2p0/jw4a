@@ -1,5 +1,6 @@
 package org.q2p0.jw4a.util;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 public class HashMapSetGet<K> extends HashMap<K, K> implements SetGet<K>{
@@ -20,4 +21,7 @@ public class HashMapSetGet<K> extends HashMap<K, K> implements SetGet<K>{
         return previous;
     }
 
+    @Override public Collection<K> values() {
+        return super.values();
+    }
 }

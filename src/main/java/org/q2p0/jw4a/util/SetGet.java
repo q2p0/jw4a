@@ -1,5 +1,7 @@
 package org.q2p0.jw4a.util;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 public interface SetGet<K> {
@@ -32,4 +34,5 @@ public interface SetGet<K> {
      */
     Set<K> keySet();
 
+    Collection<K> values();
 }

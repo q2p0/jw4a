@@ -3,6 +3,8 @@ package org.q2p0.jw4a;
 import org.antlr.v4.runtime.*;
 import org.q2p0.jw4a.ast.AST_TreePrint;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
+import org.q2p0.jw4a.generator.CodeGenerator;
+import org.q2p0.jw4a.generator.WrapperCodeGenerator;
 import org.q2p0.jw4a.parser.Jw4aParserCaller;
 import org.q2p0.jw4a.parserOptions.CommandLineParameterParserOptions;
 
@@ -33,10 +35,11 @@ public class Jw4a { //TODO: Rename to Jw4aMain
 
         AST_TreePrint.print( ast_root, 2 );
 
+        CodeGenerator codeGenerator = new WrapperCodeGenerator();
+        codeGenerator.generate(ast_root, clparser.outputDirectory);
+
         //TODO: Get the AST and call CodeGenerator
         System.out.println( );
         System.out.println( "Parser ends successfully");
     }
-
-
 }
