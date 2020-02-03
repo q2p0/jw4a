@@ -22,11 +22,11 @@ public class AST_Package implements AST_TreeComparableNode {
             this.packagePath = parentPackage.packagePath != null ? String.join(".", parentPackage.packagePath, id) : id;
 
         this.subPackages = new HashMapSetGet<>();
-        this.classes = new HashMapSetGet<>();
+        this.subClasses = new HashMapSetGet<>();
     }
 
     public SetGet< AST_Package > subPackages;
-    public SetGet< AST_Class > classes; //TODO: Change to subClasses
+    public SetGet< AST_Class > subClasses;
 
     // HashCode & Equals with (packagePath) field.
 
@@ -48,7 +48,7 @@ public class AST_Package implements AST_TreeComparableNode {
         AST_Package p = (AST_Package) node;
         if( !Objects.equals( id, p.id) ) return false;
         if( !AST_TreeComparableNode.treeEquals( subPackages, p.subPackages ) ) return false;
-        if( !AST_TreeComparableNode.treeEquals( classes, p.classes ) ) return false;
+        if( !AST_TreeComparableNode.treeEquals(subClasses, p.subClasses) ) return false;
         return true;
     }
 

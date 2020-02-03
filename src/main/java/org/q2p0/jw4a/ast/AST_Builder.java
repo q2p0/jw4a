@@ -47,7 +47,7 @@ public class AST_Builder {
 
             // Add it to AST_Package and astClassCache
             value = key;
-            _package.classes.add( value );
+            _package.subClasses.add( value );
             astClassCache.add( value );
 
             // Find reflection references between minApi and maxApi

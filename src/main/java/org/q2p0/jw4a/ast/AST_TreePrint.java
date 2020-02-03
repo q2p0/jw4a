@@ -23,7 +23,7 @@ public class AST_TreePrint {
         for(AST_Package p : root.subPackages.keySet() )
             print( p, level + NESTING);
 
-        for(AST_Class c : root.classes.keySet() )
+        for(AST_Class c : root.subClasses.keySet() )
             print( c, level + NESTING);
 
         System.out.println( nesting + "}" );
