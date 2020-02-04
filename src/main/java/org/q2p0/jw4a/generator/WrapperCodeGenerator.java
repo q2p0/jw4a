@@ -98,32 +98,51 @@ public class WrapperCodeGenerator implements CodeGenerator{
 
     private String BuildClassNameForCpp(AST_Class ast_class)
     {
-        return "jw4a_" + ast_class.id;
+        return BuildClassNameForCpp(ast_class, false);
+    }
+    private String BuildClassNameForCpp(AST_Class ast_class, boolean includeNamespace)
+    {
+        StringBuilder sb = new StringBuilder();
+        if(includeNamespace)
+        {
+            AST_Package ast_package = ast_class.ast_package;
+            while (ast_package.parentPackage != null){
+                sb.insert(0, ast_package.id + "::");
+                ast_package = ast_package.parentPackage;
+            }
+        }
+        sb.append("jw4a_" + ast_class.id);
+        return sb.toString();
     }
 
     private void BuildClassHolders(AST_Class ast_class, int level) {
         PrintTabs(headerWriter, level);
-        if(!ast_class.id.equals("Object"))
-            headerWriter.println("class " + BuildClassNameForCpp(ast_class) + ";");
+        headerWriter.println("class " + BuildClassNameForCpp(ast_class) + ";");
     }
 
     private void BuildClassDeclarations(AST_Class ast_class, int level) {
+        PrintTabs(headerWriter, level);
+        headerWriter.print("class " + BuildClassNameForCpp(ast_class) + " : public ");
+
         if(!ast_class.id.equals("Object")) {
-            PrintTabs(headerWriter, level);
-            headerWriter.print("class " + BuildClassNameForCpp(ast_class) + " : ");
             Map<Integer, AST_Class> superClasses = ast_class.superClass;
             if (superClasses.size() != 1)
                 throw new RuntimeException("Assert superClasses size != 1");
             Map.Entry<Integer, AST_Class> superClass = superClasses.entrySet().iterator().next();
-            headerWriter.println("public " + (!superClass.getValue().id.equals("Object") ? BuildClassNameForCpp(superClass.getValue()) : "_jobject"));
-            PrintTabs(headerWriter, level);
-            headerWriter.println("{");
-
-            CreateMethodIDs4Class( ast_class, level + 1);
-
-            PrintTabs(headerWriter, level);
-            headerWriter.println("};");
+            headerWriter.println(BuildClassNameForCpp(superClass.getValue(), true));
         }
+        else
+        {
+            headerWriter.println("_jobject");
+        }
+
+        PrintTabs(headerWriter, level);
+        headerWriter.println("{");
+
+        CreateMethodIDs4Class( ast_class, level + 1);
+
+        PrintTabs(headerWriter, level);
+        headerWriter.println("};");
     }
 
     // TODO: RENAME
