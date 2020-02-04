@@ -2,6 +2,7 @@ package org.q2p0.jw4a.generator;
 
 import org.q2p0.jw4a.ast.nodes.AST_Class;
 import org.q2p0.jw4a.ast.nodes.AST_Package;
+import org.q2p0.jw4a.ast.nodes.AST_PrimitiveType;
 import org.q2p0.jw4a.ast.nodes.method.AST_Method;
 import org.q2p0.jw4a.ast.nodes.method.methodReturn.AST_AbstractMethodReturn;
 import org.q2p0.jw4a.ast.nodes.method.methodReturn.AST_ClassMethodReturn;
@@ -14,6 +15,7 @@ import org.q2p0.jw4a.ast.nodes.method.parameter.AST_PrimitiveParameter;
 import java.awt.*;
 import java.io.File;
 import java.io.PrintStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -124,6 +126,19 @@ public class WrapperCodeGenerator implements CodeGenerator{
         }
     }
 
+    // TODO: RENAME
+    private String buildPackageForFindClass(AST_Class ast_class){
+        StringBuilder stringBuilder = new StringBuilder();
+        AST_Package ast_package = ast_class.ast_package;
+        while (ast_package.parentPackage != null){
+            stringBuilder.insert(0, ast_package.id + "/");
+            ast_package = ast_package.parentPackage;
+        }
+        stringBuilder.append(ast_class.id);
+        String returnedValue = stringBuilder.toString();
+        return  returnedValue;
+    }
+
     //TODO: Manage Android Integer 4 APIs
     private void CreateMethodIDs4Class(AST_Class ast_class, int level) {
 
@@ -133,6 +148,8 @@ public class WrapperCodeGenerator implements CodeGenerator{
             Set<AST_Method> set = me.getValue();
             if(set.size() > 0)
             {
+                String className = BuildClassNameForCpp(ast_class);
+
                 // Header
                 PrintTabs(headerWriter, level);
                 headerWriter.println("public:");
@@ -142,23 +159,37 @@ public class WrapperCodeGenerator implements CodeGenerator{
                 // Source
                 PrintTabs(sourceWriter, level);
                 sourceWriter.print("void " );
-                sourceWriter.print(BuildClassNameForCpp(ast_class));
+                sourceWriter.print(className);
                 sourceWriter.print("::");
                 sourceWriter.println("StaticInit(JNIEnv * pEnv)");
                 PrintTabs(sourceWriter, level);
                 sourceWriter.println("{");
+                PrintTabs(sourceWriter, level+1);
+                sourceWriter.println("jclass " + className + "_JC = pEnv -> FindClass(\"" + buildPackageForFindClass(ast_class) + "\");");
+
 
                 // Header & Source StaticInit
                 PrintTabs(headerWriter, level);
                 headerWriter.println("private:");
+
                 for(AST_Method m : set)
                 {
+                    String methodID = buildIDForMethod(ast_class, m);
+
+                    // Header
                     PrintTabs(headerWriter, level+1);
                     headerWriter.print("static jmethodID ");
-                    headerWriter.print(buildIDForMethod(ast_class, m));
+                    headerWriter.print(methodID);
                     headerWriter.println(";");
+
+                    // Source
+                    PrintTabs(sourceWriter, level+1);
+                    sourceWriter.print(methodID + " = pEnv -> GetMethodID(" + className + "_JC,\"" + m.id + "\",");
+                    sourceWriter.println( "\"" + buildMethodSignature(m) + "\");");
                 }
 
+                PrintTabs(sourceWriter, level+1);
+                sourceWriter.println("pEnv->DeleteLocalRef(" + className +"_JC);");
                 PrintTabs(sourceWriter, level);
                 sourceWriter.println("}");
             }
@@ -173,6 +204,84 @@ public class WrapperCodeGenerator implements CodeGenerator{
             throw new RuntimeException("No methods 1");
         }
         */
+    }
+
+    private String buildMethodSignature(AST_Method m) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(");
+        Iterator<AST_AbstractParameter> it = m.parameters.iterator();
+        while(it.hasNext()){
+            AST_AbstractParameter param = it.next();
+            sb.append(buildJNISignatureForParameter(param));
+        }
+        sb.append(")");
+        sb.append(buildJNISignatureForReturn(m.returnDesc));
+        return sb.toString();
+    }
+
+    private String buildJNISignatureForParameter(AST_AbstractParameter param) {
+        if(param instanceof AST_PrimitiveParameter)
+        {
+            AST_PrimitiveType primi = ((AST_PrimitiveParameter) param).primitiveType;
+            return buildJNISignatureForPrimitive(primi);
+        }
+        else if(param instanceof AST_ClassParameter)
+        {
+            AST_Class classp = ((AST_ClassParameter) param).astClass;
+            return buildJNISignatureForClass(classp);
+        }
+        else
+        {
+            throw new RuntimeException("Unimplemented AST_AbstractParameter on method WrapperCodeGenerator::buildJNISignatureForParameter");
+        }
+    }
+
+    private String buildJNISignatureForReturn(AST_AbstractMethodReturn returnDesc) {
+        if(returnDesc instanceof AST_PrimitiveTypeMethodReturn)
+        {
+            AST_PrimitiveType primi = ((AST_PrimitiveTypeMethodReturn) returnDesc).primitiveType;
+            return buildJNISignatureForPrimitive(primi);
+        }
+        else if(returnDesc instanceof AST_ClassMethodReturn)
+        {
+            AST_Class classp = ((AST_ClassMethodReturn) returnDesc).astClass;
+            return buildJNISignatureForClass(classp);
+        }
+        else  if(returnDesc instanceof AST_VoidMethodReturn)
+        {
+            return  "V";
+        }
+        else
+        {
+            throw new RuntimeException("Unimplemented AST_AbstractMethodReturn on method WrapperCodeGenerator::buildJNISignatureForReturn");
+        }
+    }
+
+    private String buildJNISignatureForPrimitive(AST_PrimitiveType primi) {
+        switch (primi)
+        {
+            case BOOLEAN: return "Z";
+            case BYTE: return "B";
+            case CHAR: return "C";
+            case DOUBLE: return "D";
+            case FLOAT: return "F";
+            case INT: return "I";
+            case LONG: return "J";
+            case SHORT: return "S";
+            //object       L
+            //void         V
+            //array        [
+            default:
+                throw new RuntimeException("Unimplemented AST_PrimitiveParameter on method WrapperCodeGenerator::buildJNISignatureForPrimitive");
+        }
+    }
+
+    private String buildJNISignatureForClass(AST_Class classp) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("L");
+        sb.append(buildPackageForFindClass(classp));
+        sb.append(";");
+        return sb.toString();
     }
 
     private String buildIDForMethod(AST_Class ast_class, AST_Method method) {
