@@ -8,6 +8,7 @@ import org.q2p0.jw4a.generator.WrapperCodeGenerator;
 import org.q2p0.jw4a.parser.Jw4aParserCaller;
 import org.q2p0.jw4a.parserOptions.CommandLineParameterParserOptions;
 
+import java.io.File;
 import java.io.IOException;
 
 public class Jw4a { //TODO: Rename to Jw4aMain
@@ -36,10 +37,23 @@ public class Jw4a { //TODO: Rename to Jw4aMain
         AST_TreePrint.print( ast_root, 2 );
 
         CodeGenerator codeGenerator = new WrapperCodeGenerator();
+
+        File directory = new File(clparser.outputDirectory);
+        // TODO: CHECKS IS NOT AND DIRECTORY, DONT EXIST CREATE
+        purgeDirectory(directory);
+
         codeGenerator.generate(ast_root, clparser.outputDirectory);
 
         //TODO: Get the AST and call CodeGenerator
         System.out.println( );
         System.out.println( "Parser ends successfully");
+    }
+
+    static void purgeDirectory(File dir) {
+        for (File file: dir.listFiles()) {
+            if (file.isDirectory())
+                purgeDirectory(file);
+            file.delete();
+        }
     }
 }

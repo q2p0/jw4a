@@ -21,9 +21,81 @@ import java.util.Set;
 
 public class WrapperCodeGenerator implements CodeGenerator{
 
-    @Override public void generate(AST_Package ASTBuilder, String outputDirectory) {
+    //*
+    private File headerFile = null;
+    private File sourceFile = null;
+    private PrintStream headerWriter = null;
+    private PrintStream sourceWriter = null;
+    //*/
 
-        CreateFiles(outputDirectory);
+    /*
+    private void CreateFiles(String outputDirectory)
+    {
+        final String HEADER_FILE_STR = "jw4a.h";
+        final String SOURCE_FILE_STR = "jw4a.cpp";
+
+        try {
+            headerFile = new File(outputDirectory + File.separator + HEADER_FILE_STR);
+        } catch (Exception e) {
+            System.err.println(e);
+            return;
+        }
+
+        try {
+            sourceFile = new File(outputDirectory + File.separator + SOURCE_FILE_STR);
+        } catch (Exception e) {
+            System.err.println(e);
+            return;
+        }
+
+        try {
+            headerWriter = new PrintStream(headerFile);
+        } catch (Exception e) {
+            System.err.println(e);
+            return;
+        }
+
+        try {
+            sourceWriter = new PrintStream(sourceFile);
+        } catch (Exception e) {
+            System.err.println(e);
+            return;
+        }
+    }
+    */
+
+    // TODO: Rename ASTBuilder to rootPackage
+    @Override public void generate(AST_Package ASTBuilder, String baseDirectory) {
+        GenerateNamespaceDirectoriesRecursive(ASTBuilder, baseDirectory);
+    }
+
+    void GenerateNamespaceDirectoriesRecursive(AST_Package rootPack, String baseDirectory)
+    {
+        String DirToCreate = null;
+        if(rootPack.id != null){
+            DirToCreate = baseDirectory + File.separator + rootPack.id;
+            new File(DirToCreate).mkdir();
+        }
+        else{
+            DirToCreate = baseDirectory;
+        }
+
+        GenerateClassesFiles(rootPack, baseDirectory);
+
+        for(AST_Package ast_package : rootPack.subPackages.values())
+            GenerateNamespaceDirectoriesRecursive(ast_package, DirToCreate);
+    }
+
+    private void GenerateClassesFiles(AST_Package rootPack, String baseDirectory) {
+        /*
+        for(rootPack)
+        {
+            // Programming interrupted.
+        }
+        */
+
+        /*
+        CreateFiles(baseDirectory);
 
         headerWriter.println("#ifndef __JW4A__");
         headerWriter.println("#define __JW4A__");
@@ -48,6 +120,7 @@ public class WrapperCodeGenerator implements CodeGenerator{
             System.err.println(e);
             return;
         }
+        */
     }
 
     private void BuildNamespaces(AST_Package root, int level)
@@ -122,9 +195,14 @@ public class WrapperCodeGenerator implements CodeGenerator{
 
     private void BuildClassDeclarations(AST_Class ast_class, int level) {
         PrintTabs(headerWriter, level);
-        headerWriter.print("class " + BuildClassNameForCpp(ast_class) + " : public ");
+
+        String className = BuildClassNameForCpp(ast_class);
+
+        headerWriter.print("class " + className);
 
         if(!ast_class.id.equals("Object")) {
+
+            headerWriter.print(" : public ");
             Map<Integer, AST_Class> superClasses = ast_class.superClass;
             if (superClasses.size() != 1)
                 throw new RuntimeException("Assert superClasses size != 1");
@@ -133,11 +211,68 @@ public class WrapperCodeGenerator implements CodeGenerator{
         }
         else
         {
-            headerWriter.println("_jobject");
+            /*
+            // Print wrapper ctor
+            PrintTabs(headerWriter, level+1);
+            headerWriter.println("public:");
+            PrintTabs(headerWriter, level+2);
+
+            //try
+            //{
+                // TODO: Warning getting the first found parent
+
+                System.out.println("########### " + className);
+
+            /*}
+            catch (Exception e)
+            {
+                String supperClassName = "TRALARI";
+            }
+            */
         }
+
+
 
         PrintTabs(headerWriter, level);
         headerWriter.println("{");
+
+        // Make protre
+        if(ast_class.id.equals("Object")) {
+
+            // Print wrapper constructor
+            PrintTabs(headerWriter, level+1);
+            headerWriter.println("public:");
+            PrintTabs(headerWriter, level+2);
+            headerWriter.println("jw4a_Object(JNIEnv * pEnv, _jobject * object);");
+
+            // Print protected variables
+            PrintTabs(headerWriter, level+1);
+            headerWriter.println("protected:");
+            PrintTabs(headerWriter, level+2);
+            headerWriter.println("JNIEnv * pEnv;");
+            PrintTabs(headerWriter, level+2);
+            headerWriter.println("_jobject * object;");
+
+            // Create ctor for jobject
+            PrintTabs(sourceWriter, level+1);
+            sourceWriter.println("jw4a_Object::jw4a_Object(JNIEnv *pEnv, _jobject * object) {");
+            PrintTabs(sourceWriter, level+2);
+            sourceWriter.println("this -> pEnv = pEnv;");
+            PrintTabs(sourceWriter, level+2);
+            sourceWriter.println("this -> object = object;");
+            PrintTabs(sourceWriter, level+1);
+            sourceWriter.println("}");
+        }
+        else // if(!ast_class.id.equals("Object"))
+        {
+            // Build wrapp constructor
+            PrintTabs(headerWriter, level+1);
+            headerWriter.println("public:");
+            AST_Class superClass = ast_class.superClass.entrySet().iterator().next().getValue();
+            String supperClassName = BuildClassNameForCpp(superClass);
+            PrintTabs(headerWriter, level+2);
+            headerWriter.println(className + "(JNIEnv * pEnv, _jobject * object) : " + supperClassName + "(pEnv, object) {};" );
+        }
 
         CreateMethodIDs4Class( ast_class, level + 1);
 
@@ -355,44 +490,6 @@ public class WrapperCodeGenerator implements CodeGenerator{
         return builder.toString();
     }
 
-    private void CreateFiles(String outputDirectory)
-    {
-        final String HEADER_FILE_STR = "jw4a.h";
-        final String SOURCE_FILE_STR = "jw4a.cpp";
-
-        try {
-            headerFile = new File(outputDirectory + File.separator + HEADER_FILE_STR);
-        } catch (Exception e) {
-            System.err.println(e);
-            return;
-        }
-
-        try {
-            sourceFile = new File(outputDirectory + File.separator + SOURCE_FILE_STR);
-        } catch (Exception e) {
-            System.err.println(e);
-            return;
-        }
-
-        try {
-            headerWriter = new PrintStream(headerFile);
-        } catch (Exception e) {
-            System.err.println(e);
-            return;
-        }
-
-        try {
-            sourceWriter = new PrintStream(sourceFile);
-        } catch (Exception e) {
-            System.err.println(e);
-            return;
-        }
-    }
-
-    private File headerFile = null;
-    private File sourceFile = null;
-    private PrintStream headerWriter = null;
-    private PrintStream sourceWriter = null;
     private final String TAB = "    ";
     private final void PrintTabs(PrintStream ps, int c){
         for(int i = 0; i<c; i++)
